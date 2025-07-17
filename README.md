@@ -17,4 +17,13 @@
 
 ## Log file format:
 * MAke sure the format is valid <timeStanp>, <level>, Event_type>, <Message>.
-  
+
+## Configuration file
+* put attention to comments '#' (maybe there is another types of comments. you should checkk)
+
+
+
+
+## Additional:
+* use cache for beteer performance
+* maybe multi threads? maybe map_reduce?
