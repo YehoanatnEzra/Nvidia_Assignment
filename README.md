@@ -15,15 +15,22 @@
 * check if "from timestamp" and "from timestamp" is indeed a valid and reasonable time (not somthing in the future or before 100 year (constant invalid year)
 
 
-## Log file format:
+### Log file format:
 * MAke sure the format is valid <timeStanp>, <level>, Event_type>, <Message>.
 
-## Configuration file
+### Configuration file
 * put attention to comments '#' (maybe there is another types of comments. you should checkk)
 
-
+### CLI UX:
+* Flags - h, --help-
+  - 
+* Usage: tiny description of the subcommends and the flags
+* Sucommands:
+* - -...
+  
 
 
 ## Additional:
 * use cache for beteer performance
 * maybe multi threads? maybe map_reduce?
+  
