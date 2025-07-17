@@ -1,5 +1,9 @@
 # TODO:
 
+## Question I would like to ask:
+* <level> and <event_type> must to be with upcase letter?
+* <if no, same level\event level but one with upcase letter and the other with down letter - its considered as a differents levels/event levels or is the same?
+
 ## Testing in my program:
 ### genearal:
 * Maybe I should implement a test function that make sure the time is correctly. (maybe outside function).
