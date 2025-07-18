@@ -2,11 +2,14 @@
 import gzip
 import os
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from log_analyzer.log_entry import LogEntry
 from log_analyzer.event_config import load_configs, EventConfig
 from log_analyzer.event_filter import EventFilter
 
+__all__ = ["LogAnalyzer"]
+DEFAULT_LOCAL_TIME = "Asia/Jerusalem"
 
 class LogAnalyzer:
     """
@@ -18,14 +21,16 @@ class LogAnalyzer:
         ts_from:       optional ISO timestamp string (inclusive lower bound)
         ts_to:         optional ISO timestamp string (inclusive upper bound)
     """
-    def __init__(self, log_dir: str, events_file: str, ts_from: str | None = None, ts_to: str | None = None):
+    def __init__(self, log_dir: str, events_file: str, ts_from: str | None = None,
+                 ts_to: str | None = None, local_timezone: ZoneInfo = ZoneInfo(DEFAULT_LOCAL_TIME)):
         """
         #todo - Should write documentation
         """
         self.log_dir = log_dir
         self.configs: list[EventConfig] = load_configs(events_file)
-        self.ts_from = datetime.fromisoformat(ts_from) if ts_from else None
-        self.ts_to = datetime.fromisoformat(ts_to) if ts_to else None
+        self.local_timezone = local_timezone
+        self.ts_from = datetime.fromisoformat(ts_from).replace(tzinfo=local_timezone) if ts_from else None
+        self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
 
     def run(self) -> None:
         """
@@ -48,13 +53,13 @@ class LogAnalyzer:
                 if not matched:
                     print("  (none)")
 
-    def _gather_entries(self) -> List[LogEntry]:
+    def _gather_entries(self) -> list[LogEntry]:
         # todo - Allow .log, .log.gz in the log folder.
         """
         Walk through all files in log_dir, parse each line to LogEntry,
         apply timestamp range filtering, and collect valid entries.
         """
-        entries: List[LogEntry] = []  # todo - why should i write that is the kind of the list?
+        entries: list[LogEntry] = []  # todo - why should i write that is the kind of the list?
         for file_name in sorted(os.listdir(self.log_dir)):
             path = os.path.join(self.log_dir, file_name)
             if not os.path.isfile(path):
@@ -67,7 +72,7 @@ class LogAnalyzer:
             with open_func(path, mode, encoding='utf-8') as f:
                 for raw in f:
                     try:
-                        entry = LogEntry.parse_line(raw)  # todo - should i sent the local time?
+                        entry = LogEntry.parse_line(raw, local_timezone=self.local_timezone)
                     except ValueError:
                         continue  # skip malformed lines
 
@@ -83,6 +88,6 @@ class LogAnalyzer:
         ts = entry.timestamp
         if self.ts_from and ts < self.ts_from:
             return False
-        if self.ts_to and ts > self.ts_to:
+        if self.ts_to and ts >= self.ts_to:
             return False
         return True
