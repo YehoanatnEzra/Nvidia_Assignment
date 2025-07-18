@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from log_analyzer import errors
+from log_analyzer import error_messages
 
 EXPECTED_LINE_FIELDS = 4  # Number of fields we expect when splitting a log line.
 MAX_PAST_YEARS = 100  # Maximum allowed age for a timestamp (in years) before we consider it "too old".
@@ -50,7 +50,7 @@ class LogEntry:
         parts = line.strip().split(" ", EXPECTED_LINE_FIELDS - 1)
 
         if len(parts) < EXPECTED_LINE_FIELDS:
-            raise ValueError(errors.INVALID_LINE_FORMAT)
+            raise ValueError(error_messages.INVALID_LINE_FORMAT)
         ts_str, lvl_str, ev_type, msg = parts
 
         # Parse ISO8601 timestamp
@@ -59,16 +59,16 @@ class LogEntry:
             if ts.tzinfo is None:
                 ts = ts.replace(tzinfo=local_timezone)
         except ValueError as e:
-            raise ValueError(errors.INVALID_TIMESTAMP_FORMAT.format(ts=ts_str, error=e))
+            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_str, error=e))
 
         now = datetime.now(local_timezone)
 
         # Validate that the timestamp is not in the future.
         if ts > now:
-            raise ValueError(errors.FUTURE_TIMESTAMP.format(ts=ts, now=now))
+            raise ValueError(error_messages.FUTURE_TIMESTAMP.format(ts=ts, now=now))
 
         # Validate that the timestamp is not unreasonably old.
         if ts < now - timedelta(days=MAX_PAST_YEARS * 365):
-            raise ValueError(errors.TOO_OLD_TIMESTAMP.format(ts=ts, years=MAX_PAST_YEARS))
+            raise ValueError(error_messages.TOO_OLD_TIMESTAMP.format(ts=ts, years=MAX_PAST_YEARS))
 
         return cls(ts, lvl_str, ev_type, msg)

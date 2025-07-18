@@ -3,6 +3,12 @@ import re
 import shlex
 from dataclasses import dataclass
 from typing import List, Optional, Pattern
+from log_analyzer import error_messages
+
+LEVEL_FLAG = "--level"
+COUNT_FLAG = "--count"
+PATTERN_FLAG = "--pattern"
+ALLOWED_FLAGS = {LEVEL_FLAG, COUNT_FLAG, PATTERN_FLAG}
 
 
 @dataclass
@@ -31,7 +37,7 @@ def load_configs(path: str) -> List[EventConfig]:
             if not line or line.startswith('#'):
                 continue
 
-            tokens = shlex.split(line) # shlex.split handles quoted regex patterns correctly
+            tokens = shlex.split(line)  # shlex.split handles quoted regex patterns correctly
             event_type = tokens[0]  # First token is the event_type
 
             # Defaults
@@ -43,21 +49,28 @@ def load_configs(path: str) -> List[EventConfig]:
             idx = 1
             while idx < len(tokens):
                 flag = tokens[idx]
-                if flag == '--count':
+
+                if flag == COUNT_FLAG:
                     count = True
                     idx += 1
-                elif flag == '--level':
+
+                elif flag == LEVEL_FLAG:
                     if idx + 1 >= len(tokens):
-                        raise ValueError(f"Missing value for --level in line: {line!r}")
+                        raise ValueError(error_messages.MISSING_VALUE_ERR.format(flat=flag, line=line))
                     level = tokens[idx+1]
                     idx += 2
-                elif flag == '--pattern':
+
+                elif flag == PATTERN_FLAG:
                     if idx + 1 >= len(tokens):
-                        raise ValueError(f"Missing value for --pattern in line: {line!r}")
+                        raise ValueError(error_messages.MISSING_VALUE_ERR.format(flat=flag, line=line))
                     pattern = re.compile(tokens[idx+1]) # compile the regex
                     idx += 2
+
                 else:
-                    raise ValueError(f"Unknown flag '{flag}' in config line: {line!r}")
+                    allowed = ", ".join(sorted(ALLOWED_FLAGS))
+                    raise ValueError(
+                        error_messages.INVALID_FLAG.format(flag=flag, line=line, allowed=allowed)
+                    )
 
             configs.append(EventConfig(
                 event_type=event_type,

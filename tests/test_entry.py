@@ -26,6 +26,7 @@ def test_parse_line_with_nepal_timezone():
     assert entry.timestamp == expected_ts
     assert entry.timestamp.tzinfo.key == "Asia/Kathmandu"
 
+
 @pytest.mark.parametrize(
     "line, description",
     [

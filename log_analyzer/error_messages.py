@@ -1,4 +1,4 @@
-# errors.py
+# error_messages.py
 
 INVALID_LINE_FORMAT = (
     "Invalid log line format — expected format: <TIMESTAMP> <LEVEL> <EVENT_TYPE> <MESSAGE>"
@@ -15,4 +15,15 @@ FUTURE_TIMESTAMP = (
 
 TOO_OLD_TIMESTAMP = (
     "Timestamp {ts} is too old — more than {years} years ago"
+)
+
+# Raised when a flag requires a value but none was provided
+MISSING_VALUE_ERR = (
+    "Missing value for {flag} in line: {line!r}"
+)
+
+# Raised when an unknown flag is encountered
+INVALID_FLAG = (
+    "Invalid flag {flag!r} in config line {line!r}. "
+    "Allowed flags are: {allowed}."
 )
