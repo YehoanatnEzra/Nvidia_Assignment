@@ -19,7 +19,7 @@ TOO_OLD_TIMESTAMP = (
 
 # Raised when a flag requires a value but none was provided
 MISSING_VALUE_ERR = (
-    "Missing value for {flag} in line: {line!r}"
+    "Missing value for {flag!r} in line: {line!r}"
 )
 
 # Raised when an unknown flag is encountered

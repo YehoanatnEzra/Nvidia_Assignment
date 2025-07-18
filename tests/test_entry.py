@@ -1,3 +1,19 @@
+"""
+Unit tests for the log_analyzer.entry module.
+
+This test suite verifies the behavior of the LogEntry.parse_line() method,
+which parses a single log line into a structured LogEntry object.
+
+# Test overview:
+- test_parse_valid_line: Parses a valid log line into all expected fields.
+- test_parse_line_with_nepal_timezone: Parses a valid log line using a custom timezone (Asia/Kathmandu).
+- test_log_line_format: Raises ValueError for malformed lines (e.g. missing fields).
+- test_invalid_timestamp_format: Raises ValueError for timestamp with incorrect format.
+- test_future_timestamp: Raises ValueError if the log line's timestamp is in the future.
+- test_too_old_timestamp: Raises ValueError if the timestamp is older than MAX_PAST_YEARS.
+"""
+
+
 import pytest
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
