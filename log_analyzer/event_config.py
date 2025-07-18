@@ -71,11 +71,6 @@ def load_configs(path: str) -> list[EventConfig]:
                         error_messages.INVALID_FLAG.format(flag=flag, line=line, allowed=allowed)
                     )
 
-            configs.append(EventConfig(
-                event_type=event_type,
-                count=count,
-                level=level,
-                pattern=pattern
-            ))
+            configs.append(EventConfig(event_type=event_type, count=count, level=level, pattern=pattern))
 
     return configs
