@@ -38,7 +38,7 @@ def test_parse_line_with_nepal_timezone():
         ("", "empty line"),
     ]
 )
-def test_too_few_fields(line, description):
+def test_log_line_format(line, description):
     with pytest.raises(ValueError) as exc:
         LogEntry.parse_line(line, local_timezone=DEFAULT_LOCAL_TZ)
 
@@ -47,7 +47,7 @@ def test_invalid_timestamp_format():
     line = "2025/07/17 12:00:00 INFO Event Something happened"
     with pytest.raises(ValueError) as exc:
         LogEntry.parse_line(line)
-   # assert "Invalid timestamp" in str(exc.value)
+    assert "Invalid timestamp" in str(exc.value)
 
 
 def test_future_timestamp():

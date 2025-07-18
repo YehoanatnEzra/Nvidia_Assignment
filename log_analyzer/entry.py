@@ -1,13 +1,10 @@
-# TODO - better documentation
-"""Log parser module.
-This module provides utilities to parse log entries from text lines into structured LogEntry objects.
-"""
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+from log_analyzer import errors
 
 EXPECTED_LINE_FIELDS = 4  # Number of fields we expect when splitting a log line.
 MAX_PAST_YEARS = 100  # Maximum allowed age for a timestamp (in years) before we consider it "too old".
-DEFAULT_TIMEZONE = ZoneInfo("Asia/Jerusalem")
+DEFAULT_TIMEZONE = ZoneInfo("Asia/Jerusalem")  # Default timezone information.
 
 
 class LogEntry:
@@ -19,8 +16,10 @@ class LogEntry:
            message (str): The textual log message.
        """
 
-    # todo - check if timestamp is valid (format and not is the future or to much time before)
     def __init__(self, timestamp: datetime, level: str, event_type: str, message: str):
+        """
+           Initializes a LogEntry instance with timestamp, level, event type, and message.
+           """
         self.timestamp = timestamp
         self.level = level
         self.event_type = event_type
@@ -29,19 +28,29 @@ class LogEntry:
     @classmethod
     def parse_line(cls, line: str, local_timezone: ZoneInfo = None) -> "LogEntry":
         """
-         Parse a single log line into a LogEntry, validating the timestamp.
-        :param local_timezone:
-        :param cls:
-        :param line:
-        :return:
+        parses a single raw log line into a structured LogEntry object.
+        including validation of the timestamp format and range.
+        The log line must follow the format: <TIMESTAMP> <LEVEL> <EVENT_TYPE> <MESSAGE>
+        The timestamp must: Be in ISO 8601 format, not be in the future and not be before than MAX_PAST_YEARS years.
+
+        Args:
+            line (str): The raw log line to parse.
+            local_timezone (ZoneInfo, optional): Timezone to assign if timestamp is naive.
+
+        Returns:
+             LogEntry: A validated and parsed LogEntry object.
+
+        Raises:
+             ValueError: If the line format is invalid, or if the timestamp is malformed, in the future or too old.
         """
         if local_timezone is None:
             local_timezone = DEFAULT_TIMEZONE
 
         # Split into exactly EXPECTED_LINE_FIELDS parts
         parts = line.strip().split(" ", EXPECTED_LINE_FIELDS - 1)
+
         if len(parts) < EXPECTED_LINE_FIELDS:
-            raise ValueError(f"Line doesn’t have 4 parts: {line!r}")
+            raise ValueError(errors.INVALID_LINE_FORMAT)
         ts_str, lvl_str, ev_type, msg = parts
 
         # Parse ISO8601 timestamp
@@ -50,20 +59,16 @@ class LogEntry:
             if ts.tzinfo is None:
                 ts = ts.replace(tzinfo=local_timezone)
         except ValueError as e:
-            raise ValueError(
-                f"Failed to parse timestamp {ts_str!r}: {e}")  # todo  - should i handle better error message
+            raise ValueError(errors.INVALID_TIMESTAMP_FORMAT.format(ts=ts_str, error=e))
 
-        #    Use your local zone if your logs are in Asia/Jerusalem
         now = datetime.now(local_timezone)
 
-        #  Validate against “now” in your local timezone
+        # Validate that the timestamp is not in the future.
         if ts > now:
-            raise ValueError(
-                f"Timestamp {ts.isoformat()} is in the future (now={now.isoformat()})"
-            )
+            raise ValueError(errors.FUTURE_TIMESTAMP.format(ts=ts, now=now))
+
+        # Validate that the timestamp is not unreasonably old.
         if ts < now - timedelta(days=MAX_PAST_YEARS * 365):
-            raise ValueError(
-                f"Timestamp {ts.isoformat()} is more than "
-                f"{MAX_PAST_YEARS} years old")
+            raise ValueError(errors.TOO_OLD_TIMESTAMP.format(ts=ts, years=MAX_PAST_YEARS))
 
         return cls(ts, lvl_str, ev_type, msg)

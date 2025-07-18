@@ -4,6 +4,7 @@ import shlex
 from dataclasses import dataclass
 from typing import List, Optional, Pattern
 
+
 @dataclass
 class EventConfig:
     """
