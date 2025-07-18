@@ -30,14 +30,12 @@ def load_configs(path: str) -> List[EventConfig]:
             if not line or line.startswith('#'):
                 continue
 
-            # shlex.split handles quoted regex patterns correctly
-            tokens = shlex.split(line)
-            # First token is the event_type
-            event_type = tokens[0]
+            tokens = shlex.split(line) # shlex.split handles quoted regex patterns correctly
+            event_type = tokens[0]  # First token is the event_type
 
             # Defaults
-            count   = False
-            level   = None
+            count = False
+            level = None
             pattern = None
 
             # Parse flags
@@ -55,12 +53,10 @@ def load_configs(path: str) -> List[EventConfig]:
                 elif flag == '--pattern':
                     if idx + 1 >= len(tokens):
                         raise ValueError(f"Missing value for --pattern in line: {line!r}")
-                    # compile the regex
-                    pattern = re.compile(tokens[idx+1])
+                    pattern = re.compile(tokens[idx+1]) # compile the regex
                     idx += 2
                 else:
-                    raise ValueError(f"Unknown flag '{flag}' in config file: {line!r}")
-
+                    raise ValueError(f"Unknown flag '{flag}' in config line: {line!r}")
 
             configs.append(EventConfig(
                 event_type=event_type,

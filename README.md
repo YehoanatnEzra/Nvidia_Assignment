@@ -47,3 +47,6 @@
 * use cache for beteer performance
 * maybe multi threads? maybe map_reduce?
   
+
+## questions:
+- There’s a strict rule on level or event level?
