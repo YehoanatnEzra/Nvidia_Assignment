@@ -1,12 +1,13 @@
 import re
-from config import EventConfig
-from log_entry import LogEntry
+from log_analyzer.config import EventConfig
+from log_analyzer.log_entry import LogEntry
 
 
 class EventFilter:
     """
-    Wraps one EventConfig and exposes a matches(entry) -> bool method.
-    """
+       Wraps one EventConfig and check if Check that entry.event_type matches the config.event_type.
+       If config.level is set or config.pattern is set,  verify is matches entry.level/pattern equals it.
+       """
     def __init__(self, cfg: EventConfig):
         self.event_type: str = cfg.event_type
         self.count:      bool = cfg.count

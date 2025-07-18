@@ -42,7 +42,7 @@ PATTERN_FLAG = "--pattern"
 
 
 def test_load_single_event(tmp_path):
-    # Creat a temporary configuration's file and load it
+    # Create a temporary configuration's file and load it
     configuration_file = tmp_path / CFG_NAME
     configuration_file.write_text("LoginEvent")
     configs = load_configs(str(configuration_file))
@@ -57,7 +57,7 @@ def test_load_single_event(tmp_path):
 
 
 def test_count_flag(tmp_path):
-    # Creat a temporary valid configuration's file with --count and load it
+    # Create a temporary valid configuration's file with --count and load it
     configuration_file = tmp_path / CFG_NAME
     configuration_file.write_text(f"LoginEvent {COUNT_FLAG}")
 
