@@ -6,17 +6,29 @@ including parsing of event rules from configuration files, handling of
 comments, blank lines, and supported flags: [--count, --level, --pattern]
 
 Test overview:
-- test_load_single_event: Load a config with a single event (no flags).
-- test_count_flag: Parse and apply the --count flag.
-- test_level_flag: Parse and apply the --level flag.
-- test_missing_level_value_raises_error: Missing value after --level.
-- test_pattern_flag: Parse and apply the --pattern flag.
-- test_missing_pattern_value_raises_error: Missing value after --pattern.
-- test_invalid_flag_raises_error: Unknown flag should raise an error.
-- test_all_flags_combined: Use all supported flags in one rule.
-- est_invalid_pattern_regex_raises: Verifies that the flags can be mixed arbitrarily
-- test_skip_comments_and_blank_lines: Skip comments and empty lines.
-- test_empty_or_comments_only: Empty file or comment-only file → empty config.
+    # Basic event parsing
+    - test_load_single_event: Load a config with a single event (no flags).
+
+    # Count flag
+    - test_count_flag: Parse and apply the --count flag.
+
+    # Level flag
+    - test_level_flag: Parse and apply the --level flag.
+    - test_missing_level_value_raises_error: Missing value after --level.
+
+    # Pattern flag
+    - test_pattern_flag: Parse and apply the --pattern flag.
+    - test_missing_pattern_value_raises_error: Missing value after --pattern.
+    - test_invalid_pattern_regex_raises: Invalid regex pattern should raise error.
+
+    # Invalid / combined cases
+    - test_invalid_flag_raises_error: Unknown flag should raise an error.
+    - test_all_flags_combined: Use all supported flags in one rule.
+    - test_flags_in_any_order: Verifies that the flags can be mixed arbitrarily.
+
+    # Whitespace and comment handling
+    - test_skip_comments_and_blank_lines: Skip comments and empty lines.
+    - test_empty_or_comments_only: Empty file or comment-only file → empty config.
 """
 
 import re
@@ -132,7 +144,16 @@ def test_all_flags_combined(tmp_path):
     assert config.pattern.pattern == "failed"
 
 
-
+def test_flags_in_any_order(tmp_path):
+    cfg = tmp_path / "events.txt"
+    cfg.write_text(
+        f"MyEvent {PATTERN_FLAG} \"x+\" {COUNT_FLAG} {LEVEL_FLAG} DEBUG"
+    )
+    c = load_configs(str(cfg))[0]
+    assert c.event_type == "MyEvent"
+    assert c.count is True
+    assert c.level == "DEBUG"
+    assert c.pattern.pattern == "x+"
 
 
 def test_skip_comments_and_blank_lines(tmp_path):

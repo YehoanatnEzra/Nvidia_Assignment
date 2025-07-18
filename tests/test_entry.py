@@ -17,7 +17,7 @@ which parses a single log line into a structured LogEntry object.
 import pytest
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from log_analyzer.entry import LogEntry, EXPECTED_LINE_FIELDS, MAX_PAST_YEARS
+from log_analyzer.log_entry import LogEntry, MAX_PAST_YEARS
 
 DEFAULT_LOCAL_TZ = ZoneInfo("Asia/Jerusalem")
 
@@ -56,7 +56,7 @@ def test_parse_line_with_nepal_timezone():
     ]
 )
 def test_log_line_format(line, description):
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValueError):
         LogEntry.parse_line(line, local_timezone=DEFAULT_LOCAL_TZ)
 
 
@@ -81,5 +81,3 @@ def test_too_old_timestamp():
     with pytest.raises(ValueError) as exc:
         LogEntry.parse_line(line)
     assert f"more than {MAX_PAST_YEARS} years" in str(exc.value)
-
-
