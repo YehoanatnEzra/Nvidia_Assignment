@@ -33,7 +33,7 @@ Test overview:
 
 import re
 import pytest
-from log_analyzer.config import load_configs, EventConfig
+from log_analyzer.event_config import load_configs, EventConfig
 
 CFG_NAME = "events.txt"
 LEVEL_FLAG = "--level"

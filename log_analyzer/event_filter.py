@@ -1,5 +1,5 @@
 import re
-from log_analyzer.config import EventConfig
+from log_analyzer.event_config import EventConfig
 from log_analyzer.log_entry import LogEntry
 
 
