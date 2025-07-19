@@ -41,16 +41,28 @@ class LogAnalyzer:
             matched = [entry for entry in entries if flt.matches(entry)]
 
             header = ev_config.event_type
+            # If there was a pattern or level constraint, show it
+            specs = []
+            if ev_config.count:
+                specs.append(f" count")
+            if ev_config.level:
+                specs.append(f" level={ev_config.level}")
+            if ev_config.pattern:
+                specs.append(f" pattern={ev_config.pattern.pattern}")
+            if specs:
+                header += " (flags:" + ",".join(specs) + ")"
 
             if ev_config.count:
                 # Note the colon, which your tests look for
-                print(f"** {header}: {len(matched)} matches: **")
+                print(f"{header}: {len(matched)} matches:\n")
+
             else:
-                print(f"**{header} matching entries:**")
+                print(f"{header} matching entries:")
                 for entry in matched:
                     print(f"  {entry}")
                 if not matched:
                     print("  (none)")
+                print(" ")
 
     def _gather_entries(self) -> list[LogEntry]:
         """

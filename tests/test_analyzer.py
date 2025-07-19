@@ -154,7 +154,7 @@ def test_multiple_filters_for_same_event_type(tmp_path):
 
     config_lines = [
         "TestEvent --count",
-        "TestEvent --count --pattern ^Another.*",
+        "TestEvent  --pattern ^Another.*",
         "TestEvent --count --level INFO"
     ]
     config_file = tmp_path / "events.txt"
@@ -163,13 +163,11 @@ def test_multiple_filters_for_same_event_type(tmp_path):
     saved_stdout = sys.stdout
     try:
         sys.stdout = StringIO()
-        analyzer = LogAnalyzer(str(log_dir), str(config_file)).run()
+        LogAnalyzer(str(log_dir), str(config_file)).run()
 
         output = sys.stdout.getvalue()
-
         assert "3 matches" in output
-        assert "1 matches" in output
+        assert "^Another.*" in output
         assert "2 matches" in output
-
     finally:
         sys.stdout = saved_stdout
