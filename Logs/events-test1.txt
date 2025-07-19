@@ -1,3 +1,5 @@
 EVENT 
 EVENT --count  --pattern ^Another.*
 EVENT  --level INFO
+# comment
+TELEMETRY

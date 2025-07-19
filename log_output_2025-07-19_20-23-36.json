@@ -1,0 +1,508 @@
+[
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T10:00:00+03:00",
+    "level": "INFO",
+    "message": "First valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T11:00:00+03:00",
+    "level": "INFO",
+    "message": "Another valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T12:00:00+03:00",
+    "level": "DEBUG",
+    "message": "Should not match level INFO"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": true,
+      "level": null,
+      "pattern": "^Another.*"
+    },
+    "timestamp": "2025-07-18T11:00:00+03:00",
+    "level": "INFO",
+    "message": "Another valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": "INFO",
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T10:00:00+03:00",
+    "level": "INFO",
+    "message": "First valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": "INFO",
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T11:00:00+03:00",
+    "level": "INFO",
+    "message": "Another valid match"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:03:05+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 1793.845 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:15:30+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 120.5 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:30:00+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 95.2 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:45:12+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 234.7 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:00:15+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 156.3 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:15:08+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 89.1 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:30:55+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 312.8 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:45:38+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 178.9 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:00:33+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 267.4 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:15:42+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 143.6 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:03:05+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 1793.845 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:15:30+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 120.5 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:30:00+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 95.2 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:45:12+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 234.7 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:00:15+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 156.3 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:15:08+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 89.1 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:30:55+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 312.8 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:45:38+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 178.9 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:00:33+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 267.4 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:15:42+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 143.6 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:03:05+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 1793.845 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:15:30+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 120.5 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:30:00+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 95.2 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:45:12+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 234.7 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:00:15+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 156.3 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:15:08+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 89.1 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:30:55+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 312.8 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:45:38+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 178.9 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:00:33+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 267.4 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:15:42+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 143.6 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:03:05+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 1793.845 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:15:30+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 120.5 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:30:00+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 95.2 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T14:45:12+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 234.7 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:00:15+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 156.3 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:15:08+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 89.1 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:30:55+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 312.8 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T15:45:38+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 178.9 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:00:33+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 267.4 sec"
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-06-01T16:15:42+03:00",
+    "level": "INFO",
+    "message": "Iteration time: 143.6 sec"
+  }
+]

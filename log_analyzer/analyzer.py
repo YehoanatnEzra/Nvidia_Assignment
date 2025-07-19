@@ -1,5 +1,7 @@
 # log_analyzer/analyzer.py
+import csv
 import gzip
+import json
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -64,6 +66,37 @@ class LogAnalyzer:
             matched = [e for e in entries if flt.matches(e)]
             results.append((ev_config, matched))
         return results
+
+    def _exportable_results(self) -> list[dict]:
+        """Return a flat list of log entries for export (used by both JSON and CSV)."""
+        entries = []
+        for cfg, matched in self.analyze():
+            filters = {
+                "count": bool(cfg.count),
+                "level": cfg.level,
+                "pattern": cfg.pattern.pattern if cfg.pattern else None,
+            }
+            for entry in matched:
+                entries.append({
+                    "event_type": cfg.event_type,
+                    "filters": filters,
+                    "timestamp": entry.timestamp.isoformat(),
+                    "level": entry.level,
+                    "message": entry.message,
+                })
+        return entries
+
+    def export_to_json(self, path: str) -> None:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(self._exportable_results(), f, indent=2, ensure_ascii=False)
+
+    def export_to_csv(self, path: str) -> None:
+        with open(path, "w", newline='', encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=["timestamp", "level", "event_type", "message", "filters"])
+            writer.writeheader()
+            for row in self._exportable_results():
+                row["filters"] = str(row["filters"])
+                writer.writerow(row)
 
     def _gather_entries(self) -> list[LogEntry]:
         """

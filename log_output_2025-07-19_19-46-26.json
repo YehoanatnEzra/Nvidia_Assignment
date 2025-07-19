@@ -1,0 +1,68 @@
+[
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T10:00:00+03:00",
+    "level": "INFO",
+    "message": "First valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T11:00:00+03:00",
+    "level": "INFO",
+    "message": "Another valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": null,
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T12:00:00+03:00",
+    "level": "DEBUG",
+    "message": "Should not match level INFO"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": true,
+      "level": null,
+      "pattern": "^Another.*"
+    },
+    "timestamp": "2025-07-18T11:00:00+03:00",
+    "level": "INFO",
+    "message": "Another valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": "INFO",
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T10:00:00+03:00",
+    "level": "INFO",
+    "message": "First valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
+      "count": false,
+      "level": "INFO",
+      "pattern": null
+    },
+    "timestamp": "2025-07-18T11:00:00+03:00",
+    "level": "INFO",
+    "message": "Another valid match"
+  }
+]
