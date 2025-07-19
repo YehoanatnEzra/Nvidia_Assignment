@@ -5,13 +5,15 @@ import json
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
+from pathlib import Path
 from log_analyzer.log_entry import LogEntry
 from log_analyzer.event_config import load_configs, EventConfig
 from log_analyzer.event_filter import EventFilter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 DEFAULT_LOCAL_TIME = "Asia/Jerusalem"
+MAX_WORKERS = os.cpu_count() or 4
 
 
 class LogAnalyzer:
@@ -42,6 +44,7 @@ class LogAnalyzer:
         self.local_timezone = local_timezone
         self.ts_from = datetime.fromisoformat(ts_from).replace(tzinfo=local_timezone) if ts_from else None
         self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
+        self.max_workers = MAX_WORKERS
 
     def _analyze(self) -> list[tuple[EventConfig, list[LogEntry]]]:
         entries = self._gather_entries()
@@ -52,30 +55,35 @@ class LogAnalyzer:
             results.append((ev_config, matched))
         return results
 
+
+
     def _gather_entries(self) -> list[LogEntry]:
         """
-        Walk through all files in log_dir, parse each line to LogEntry,
-        apply timestamp range filtering, and collect valid entries.
+        Parallel version: Walk through all files in log_dir using threads,
+        parse each line to LogEntry, apply timestamp filtering, and collect valid entries.
         """
         entries: list[LogEntry] = []
-        for file_name in sorted(os.listdir(self.log_dir)):
-            path = os.path.join(self.log_dir, file_name)
-            if not os.path.isfile(path):
-                continue
-            if not (file_name.endswith(".log") or file_name.endswith(".log.gz")):
-                continue
+        log_dir_path = Path(self.log_dir)
+        log_files = [
+            p for p in log_dir_path.iterdir()
+            if p.is_file() and (p.suffix == ".log" or p.suffix == ".gz")
+        ]
 
-            open_func = gzip.open if path.endswith(".gz") else open
-            mode = "rt" if path.endswith(".gz") else "r"
-            with open_func(path, mode, encoding='utf-8') as f:
-                for raw in f:
-                    try:
-                        entry = LogEntry.parse_line(raw, local_timezone=self.local_timezone)
-                    except ValueError:
-                        continue  # skip malformed lines
+        def _process_file(path: Path) -> list[LogEntry]:
+            result = []
+            open_func = gzip.open if path.suffix == ".gz" else open
+            with open_func(path, "rt", encoding="utf-8", errors="ignore") as f:
+                for line in f:
+                    entry = LogEntry.parse_line(line, local_timezone=self.local_timezone)
+                    if entry and self._in_range(entry):
+                        result.append(entry)
+            return result
 
-                    if self._in_range(entry):
-                        entries.append(entry)
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = {executor.submit(_process_file, path): path for path in log_files}
+            for future in as_completed(futures):
+                entries.extend(future.result())
+
         return entries
 
     def _in_range(self, entry: LogEntry) -> bool:
