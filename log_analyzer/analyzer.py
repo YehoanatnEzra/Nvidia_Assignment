@@ -10,6 +10,7 @@ from log_analyzer.event_config import load_configs, EventConfig
 from log_analyzer.event_filter import EventFilter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from log_analyzer import error_messages
+from functools import cached_property
 
 DEFAULT_LOCAL_TIME = "Asia/Jerusalem"    # Default timezone used for interpreting timestamps
 MAX_WORKERS = os.cpu_count() or 4        # Maximum number of threads to use
@@ -43,12 +44,12 @@ class LogAnalyzer:
         self.local_timezone = local_timezone
         try:
             self.ts_from = datetime.fromisoformat(ts_from).replace(tzinfo=local_timezone) if ts_from else None
-        except ValueError as e:
+        except ValueError:
             raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_from))
 
         try:
             self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
-        except ValueError as e:
+        except ValueError:
             raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_to))
 
         self.max_workers = MAX_WORKERS
@@ -56,6 +57,14 @@ class LogAnalyzer:
     # -------------------
     # Helper Functions
     # -------------------
+
+    @cached_property
+    def _cached_analysis(self) -> list[tuple[EventConfig, list[LogEntry]]]:
+        """
+        Computes the filtered log entries per event config once and caches the result.
+        Used by run(), export_to_json(), export_to_csv().
+        """
+        return self._analyze()
 
     def _analyze(self) -> list[tuple[EventConfig, list[LogEntry]]]:
         """ Analyze log entries by applying all event filters in parallel using threads."""
@@ -65,7 +74,7 @@ class LogAnalyzer:
             """ A task that filters entries using a specific config"""
             flt = EventFilter(ev_config)
             matched = [e for e in entries if flt.matches(e)]
-            return (ev_config, matched)
+            return ev_config, matched
 
         results = []
         # Use thread pool to process each config in parallel
@@ -123,7 +132,7 @@ class LogAnalyzer:
     def _exportable_results(self) -> list[dict]:
         """Return a flat list of log entries for export (used by both JSON and CSV)."""
         entries = []
-        for ev_confing, matched in self._analyze():
+        for ev_confing, matched in self._cached_analysis:
             filters = {
                 "count": bool(ev_confing.count),
                 "level": ev_confing.level,
@@ -156,7 +165,7 @@ class LogAnalyzer:
         This is the main method triggered in CLI usage when no export format is requested.
         """
 
-        for ev_config, matched in self._analyze():
+        for ev_config, matched in self._cached_analysis:
             header = f"EventType: {ev_config.event_type}"
             specs = []
             if ev_config.count:

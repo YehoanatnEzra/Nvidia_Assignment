@@ -8,7 +8,6 @@ Test Overview:
     - test_combined_constraints: Validates that all three fields (event_type + level + pattern) must match together.
 """
 
-
 from datetime import datetime
 import re
 from log_analyzer.event_config import EventConfig

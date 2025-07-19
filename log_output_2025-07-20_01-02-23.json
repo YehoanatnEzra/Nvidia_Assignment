@@ -35,6 +35,17 @@
   {
     "event_type": "EVENT",
     "filters": {
+      "count": true,
+      "level": null,
+      "pattern": "^Another.*"
+    },
+    "timestamp": "2025-07-18T11:00:00+03:00",
+    "level": "INFO",
+    "message": "Another valid match"
+  },
+  {
+    "event_type": "EVENT",
+    "filters": {
       "count": false,
       "level": "INFO",
       "pattern": null
@@ -49,17 +60,6 @@
       "count": false,
       "level": "INFO",
       "pattern": null
-    },
-    "timestamp": "2025-07-18T11:00:00+03:00",
-    "level": "INFO",
-    "message": "Another valid match"
-  },
-  {
-    "event_type": "EVENT",
-    "filters": {
-      "count": true,
-      "level": null,
-      "pattern": "^Another.*"
     },
     "timestamp": "2025-07-18T11:00:00+03:00",
     "level": "INFO",
