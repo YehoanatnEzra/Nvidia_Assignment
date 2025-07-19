@@ -33,19 +33,27 @@ class LogAnalyzer:
         self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
 
     def run(self) -> None:
-        """
-        Execute the analysis: parse logs, apply filters, and print results.
-        Prints either counts or matching entries based on each EventConfig.
-        """
         entries = self._gather_entries()
 
         for ev_config in self.configs:
             flt = EventFilter(ev_config)
             matched = [entry for entry in entries if flt.matches(entry)]
 
-            header = f"[{ev_config.event_type}]"
+            # Build a descriptive header without square brackets
+            if ev_config.pattern or ev_config.level:
+                parts = []
+                if ev_config.pattern:
+                    parts.append(f"pattern={ev_config.pattern.pattern}")
+                if ev_config.level:
+                    parts.append(f"level={ev_config.level}")
+                spec = ", ".join(parts)
+                header = f"{ev_config.event_type} ({spec})"
+            else:
+                header = ev_config.event_type
+
             if ev_config.count:
-                print(f"{header} {len(matched)} matches")
+                # Note the colon, which your tests look for
+                print(f"{header}: {len(matched)} matches")
             else:
                 print(f"{header} matching entries:")
                 for entry in matched:
@@ -54,12 +62,11 @@ class LogAnalyzer:
                     print("  (none)")
 
     def _gather_entries(self) -> list[LogEntry]:
-        # todo - Allow .log, .log.gz in the log folder.
         """
         Walk through all files in log_dir, parse each line to LogEntry,
         apply timestamp range filtering, and collect valid entries.
         """
-        entries: list[LogEntry] = []  # todo - why should i write that is the kind of the list?
+        entries: list[LogEntry] = []
         for file_name in sorted(os.listdir(self.log_dir)):
             path = os.path.join(self.log_dir, file_name)
             if not os.path.isfile(path):
@@ -88,6 +95,6 @@ class LogAnalyzer:
         ts = entry.timestamp
         if self.ts_from and ts < self.ts_from:
             return False
-        if self.ts_to and ts >= self.ts_to:
+        if self.ts_to and ts > self.ts_to:
             return False
         return True

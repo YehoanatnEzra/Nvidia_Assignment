@@ -112,11 +112,11 @@ def test_run_with_timestamp_range_filter(tmp_path):
     middle1 = f"{ts_from} INFO EventType msg inside"   # inclusive upper bound
     middle2 = "2025-07-18T12:00:00 INFO EventType msg inside"
     middle3 = "2025-07-18T12:10:00 INFO EventType msg inside"
-    late1 = f"{ts_to} INFO EventType msg inside"  # exclusive lower bound
-    late2 = "2025-07-18T23:59:52 INFO EventType msg late"
-    late3 = "2025-07-19T20:00:00 INFO EventType msg late"
+    middle4 = f"{ts_to} INFO EventType msg inside"  # inclusive lower bound
+    late1 = "2025-07-18T23:59:52 INFO EventType msg late"
+    late2 = "2025-07-19T20:00:00 INFO EventType msg late"
 
-    _write_log_file(log_dir / "range.log", [early1, middle1, middle2, middle3, late1, late2, late3], compress=False)
+    _write_log_file(log_dir / "range.log", [early1, middle1, middle2, middle3, late1, late2, middle4], compress=False)
 
     config_file = tmp_path / "events.txt"
     config_file.write_text("EventType --count")
@@ -129,7 +129,47 @@ def test_run_with_timestamp_range_filter(tmp_path):
         output = sys.stdout.getvalue()
 
         assert "EventType" in output
+        assert "4 matches" in output
+
+    finally:
+        sys.stdout = saved_stdout
+
+
+def test_multiple_filters_for_same_event_type(tmp_path):
+    """
+    Ensure that multiple filters for the same event type (e.g., --count, --pattern, --level)
+    are each evaluated and reported independently.
+    """
+
+    log_dir = tmp_path / "logs"
+    log_dir.mkdir()
+
+    log_lines = [
+        "2025-07-18T10:00:00 INFO TestEvent First valid match",
+        "2025-07-18T11:00:00 INFO TestEvent Another valid match",
+        "2025-07-18T12:00:00 DEBUG TestEvent Should not match level INFO",
+        "2025-07-18T13:00:00 INFO OtherEvent Should be ignored"
+    ]
+    _write_log_file(log_dir / "test.log", log_lines)
+
+    config_lines = [
+        "TestEvent --count",
+        "TestEvent --count --pattern ^Another.*",
+        "TestEvent --count --level INFO"
+    ]
+    config_file = tmp_path / "events.txt"
+    config_file.write_text("\n".join(config_lines))
+
+    saved_stdout = sys.stdout
+    try:
+        sys.stdout = StringIO()
+        analyzer = LogAnalyzer(str(log_dir), str(config_file))
+        analyzer.run()
+        output = sys.stdout.getvalue()
+
         assert "3 matches" in output
-        
+        assert "TestEvent (pattern=^Another.*): 1 matches" in output
+        assert "TestEvent (level=INFO): 2 matches" in output
+
     finally:
         sys.stdout = saved_stdout
