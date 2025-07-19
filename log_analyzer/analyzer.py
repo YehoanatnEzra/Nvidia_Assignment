@@ -11,6 +11,7 @@ from log_analyzer.event_filter import EventFilter
 __all__ = ["LogAnalyzer"]
 DEFAULT_LOCAL_TIME = "Asia/Jerusalem"
 
+
 class LogAnalyzer:
     """
     Ties together parsing, configuration, filtering, and reporting.
@@ -39,23 +40,13 @@ class LogAnalyzer:
             flt = EventFilter(ev_config)
             matched = [entry for entry in entries if flt.matches(entry)]
 
-            # Build a descriptive header without square brackets
-            if ev_config.pattern or ev_config.level:
-                parts = []
-                if ev_config.pattern:
-                    parts.append(f"pattern={ev_config.pattern.pattern}")
-                if ev_config.level:
-                    parts.append(f"level={ev_config.level}")
-                spec = ", ".join(parts)
-                header = f"{ev_config.event_type} ({spec})"
-            else:
-                header = ev_config.event_type
+            header = ev_config.event_type
 
             if ev_config.count:
                 # Note the colon, which your tests look for
-                print(f"{header}: {len(matched)} matches")
+                print(f"** {header}: {len(matched)} matches: **")
             else:
-                print(f"{header} matching entries:")
+                print(f"**{header} matching entries:**")
                 for entry in matched:
                     print(f"  {entry}")
                 if not matched:

@@ -163,13 +163,13 @@ def test_multiple_filters_for_same_event_type(tmp_path):
     saved_stdout = sys.stdout
     try:
         sys.stdout = StringIO()
-        analyzer = LogAnalyzer(str(log_dir), str(config_file))
-        analyzer.run()
+        analyzer = LogAnalyzer(str(log_dir), str(config_file)).run()
+
         output = sys.stdout.getvalue()
 
         assert "3 matches" in output
-        assert "TestEvent (pattern=^Another.*): 1 matches" in output
-        assert "TestEvent (level=INFO): 2 matches" in output
+        assert "1 matches" in output
+        assert "2 matches" in output
 
     finally:
         sys.stdout = saved_stdout

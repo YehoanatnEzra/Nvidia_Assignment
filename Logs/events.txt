@@ -1,0 +1,3 @@
+TestEvent 
+TestEvent  --pattern ^Another.*
+TestEvent  --level INFO

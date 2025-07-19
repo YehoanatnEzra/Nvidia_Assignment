@@ -72,3 +72,8 @@ class LogEntry:
             raise ValueError(error_messages.TOO_OLD_TIMESTAMP.format(ts=ts, years=MAX_PAST_YEARS))
 
         return cls(ts, lvl_str, ev_type, msg)
+
+    def __str__(self) -> str:
+        ts = self.timestamp.isoformat()
+        return f"{ts} {self.level} {self.event_type} {self.message}"
+
