@@ -16,16 +16,15 @@ Arguments:
 Features:
     - Supports multiple filters per event (type, log level, regex pattern).
     - Can output either raw matching entries or a count summary.
-    - Interactive option to export results as CSV or JSON.
+    - Interactive option to export results as JSON.
     - Handles both plain text logs (.log) and compressed logs (.log.gz).
 
 Author:
-    Yehonatan Ezra
+    Yehonatan Ezra - yonzra12@gmail.com
     Created as part of the NVIDIA Home Assignment.
 """
 
 import argparse
-import sys
 from datetime import datetime
 from pathlib import Path
 from log_analyzer.analyzer import LogAnalyzer
@@ -51,17 +50,17 @@ def _handle_export(analyzer):
     Interactively prompts the user to export the analysis results.
     If the user selects 'json' or 'csv', the results are written to a timestamped file.
     """
-    choice = input("Would you like to export the results? Type 'json', 'csv', or 'n' for no export. ").strip().lower()
-    while choice not in ("json", "csv", "n"):
-        choice = input("Invalid option. Please type 'json', 'csv', or 'n': ").strip().lower()
 
-    if choice != "n":
+    print("Would you like to export the results?")
+
+    choice = ""
+    while choice not in ("y", "n"):
+        choice = input("Please type 'y' or 'n': ").strip().lower()
+
+    if choice == "y":
         date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"log_output_{date_str}.{choice}"
-        if choice == "json":
-            analyzer.export_to_json(filename)
-        elif choice == "csv":
-            analyzer.export_to_csv(filename)
+        filename = f"log_output_{date_str}.json"
+        analyzer.export_to_json(filename)
         print(f"Export complete: {filename}\n")
 
 
@@ -99,17 +98,10 @@ def main():
 
     _print_intro()  # welcome message
 
-    # Try to initialize the LogAnalyzer with provided paths and optional timestamps
-    try:
-        analyzer = LogAnalyzer(str(log_dir), str(events_file), ts_from=args.ts_from, ts_to=args.ts_to)
-    except ValueError as e:
-        print(f"\n{e}")
-        sys.exit(1)
+    analyzer = LogAnalyzer(str(log_dir), str(events_file), ts_from=args.ts_from, ts_to=args.ts_to)
+    analyzer.run()  # Run the core analysis: read logs, apply filters, and print results
 
-    # Run the core analysis: read logs, apply filters, and print results
-    analyzer.run()
-
-    # Ask the user if they want to export the results (JSON or CSV)
+    # Ask the user if they want to export the results to Json
     _handle_export(analyzer)
 
     # Show closing message
@@ -117,4 +109,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except ValueError as e:
+        print(f"{e}\n")
+        print("Please try again :)")

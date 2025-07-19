@@ -1,4 +1,3 @@
-import csv
 import gzip
 import json
 import os
@@ -44,13 +43,13 @@ class LogAnalyzer:
         self.local_timezone = local_timezone
         try:
             self.ts_from = datetime.fromisoformat(ts_from).replace(tzinfo=local_timezone) if ts_from else None
-        except ValueError:
-            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_from))
+        except ValueError as e:
+            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_from, error=e))
 
         try:
             self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
-        except ValueError:
-            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_to))
+        except ValueError as e:
+            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_to, error=e))
 
         self.max_workers = MAX_WORKERS
 
@@ -60,10 +59,7 @@ class LogAnalyzer:
 
     @cached_property
     def _cached_analysis(self) -> list[tuple[EventConfig, list[LogEntry]]]:
-        """
-        Computes the filtered log entries per event config once and caches the result.
-        Used by run(), export_to_json(), export_to_csv().
-        """
+        """Computes the filtered log entries per event config once and caches the result."""
         return self._analyze()
 
     def _analyze(self) -> list[tuple[EventConfig, list[LogEntry]]]:
@@ -129,25 +125,6 @@ class LogAnalyzer:
             return False
         return True
 
-    def _exportable_results(self) -> list[dict]:
-        """Return a flat list of log entries for export (used by both JSON and CSV)."""
-        entries = []
-        for ev_confing, matched in self._cached_analysis:
-            filters = {
-                "count": bool(ev_confing.count),
-                "level": ev_confing.level,
-                "pattern": ev_confing.pattern.pattern if ev_confing.pattern else None,
-            }
-            for entry in matched:
-                entries.append({
-                    "event_type": ev_confing.event_type,
-                    "filters": filters,
-                    "timestamp": entry.timestamp.isoformat(),
-                    "level": entry.level,
-                    "message": entry.message,
-                })
-        return entries
-
     # -------------------
     # Public Functions
     # -------------------
@@ -169,11 +146,11 @@ class LogAnalyzer:
             header = f"EventType: {ev_config.event_type}"
             specs = []
             if ev_config.count:
-                specs.append("count")
+                specs.append("v count")
             if ev_config.level:
-                specs.append(f"level={ev_config.level}")
+                specs.append(f" level={ev_config.level}")
             if ev_config.pattern:
-                specs.append(f"pattern={ev_config.pattern.pattern}")
+                specs.append(f" pattern={ev_config.pattern.pattern}")
             if specs:
                 header += "\nflags:" + ",".join(specs) + ":"
 
@@ -184,7 +161,7 @@ class LogAnalyzer:
                 for entry in matched:
                     print(f"  {entry}")
                 if not matched:
-                    print("  (none)")
+                    print("  none")
                 print(" ")
 
     def export_to_json(self, path: str) -> None:
@@ -195,18 +172,27 @@ class LogAnalyzer:
                  path (str): Destination file path.
              """
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(self._exportable_results(), f, indent=2, ensure_ascii=False)
+            results = []
+            for ev_config, matched in self._cached_analysis:
+                group = {
+                    "event_type": ev_config.event_type,
+                    "filters": {
+                        "count": ev_config.count,
+                        "level": ev_config.level,
+                        "pattern": ev_config.pattern.pattern if ev_config.pattern else None,
+                    },
+                    "entries": [
+                        {
+                            "timestamp": entry.timestamp.isoformat(),
+                            "level": entry.level,
+                            "message": entry.message,
+                        }
+                        for entry in matched
+                    ]
+                }
+                results.append(group)
 
-    def export_to_csv(self, path: str) -> None:
-        """
-              Exports filtered log entries to a CSV file.
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(results, f, indent=2, ensure_ascii=False)
 
-              Args:
-                  path (str): Destination file path.
-              """
-        with open(path, "w", newline='', encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=["timestamp", "level", "event_type", "message", "filters"])
-            writer.writeheader()
-            for row in self._exportable_results():
-                row["filters"] = str(row["filters"])
-                writer.writerow(row)
+

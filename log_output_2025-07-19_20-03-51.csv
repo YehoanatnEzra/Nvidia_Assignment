@@ -1,7 +1,0 @@
-timestamp,level,event_type,message,filters
-2025-07-18T10:00:00+03:00,INFO,EVENT,First valid match,"{'count': False, 'level': None, 'pattern': None}"
-2025-07-18T11:00:00+03:00,INFO,EVENT,Another valid match,"{'count': False, 'level': None, 'pattern': None}"
-2025-07-18T12:00:00+03:00,DEBUG,EVENT,Should not match level INFO,"{'count': False, 'level': None, 'pattern': None}"
-2025-07-18T11:00:00+03:00,INFO,EVENT,Another valid match,"{'count': True, 'level': None, 'pattern': '^Another.*'}"
-2025-07-18T10:00:00+03:00,INFO,EVENT,First valid match,"{'count': False, 'level': 'INFO', 'pattern': None}"
-2025-07-18T11:00:00+03:00,INFO,EVENT,Another valid match,"{'count': False, 'level': 'INFO', 'pattern': None}"

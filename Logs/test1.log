@@ -1,4 +1,0 @@
-2025-07-18T10:00:00 INFO EVENT First valid match
-2025-07-18T11:00:00 INFO EVENT Another valid match
-2025-07-18T12:00:00 DEBUG EVENT Should not match level INFO
-2025-07-18T13:00:00 INFO OTHEREVENT Should be ignored

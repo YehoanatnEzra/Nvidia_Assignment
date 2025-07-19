@@ -4,9 +4,9 @@ Standardized error messages used throughout the log_analyzer system.
 
 # Raised when a log line doesn't follow the expected structure or formatting
 INVALID_LINE_FORMAT = (
-    "Invalid log line format — expected format: <TIMESTAMP> <LEVEL> <EVENT_TYPE> <MESSAGE>. "
-    "LEVEL and EVENT_TYPE must be uppercase. "
-    "TIMESTAMP must be ISO‑8601 (YYYY‑MM‑DDThh:mm:ss), "
+    "Invalid log line format — expected format: <TIMESTAMP> <LEVEL> <EVENT_TYPE> <MESSAGE>.\n"
+    "LEVEL and EVENT_TYPE must be uppercase.\n"
+    "TIMESTAMP must be ISO‑8601 (YYYY‑MM‑DDThh:mm:ss).\n"
     "Example: 2025-07-17T12:00:00 INFO LOGIN User 'bob' logged in"
 )
 
@@ -17,19 +17,13 @@ INVALID_TIMESTAMP_FORMAT = (
 )
 
 # Raised when a timestamp is in the future
-FUTURE_TIMESTAMP = (
-    "Timestamp {ts} is in the future (now={now})"
-)
+FUTURE_TIMESTAMP = "Timestamp {ts} is in the future (now={now})"
 
 # Raised when a timestamp is older than the allowed limit
-TOO_OLD_TIMESTAMP = (
-    "Timestamp {ts} is too old — more than {years} years ago"
-)
+TOO_OLD_TIMESTAMP = "Timestamp {ts} is too old — more than {years} years ago"
 
 # Raised when a flag is used without a value
-MISSING_VALUE_ERR = (
-    "Missing value for {flag!r} in line: {line!r}"
-)
+MISSING_VALUE_ERR = "Missing value for {flag!r} in line: {line!r}"
 
 # Raised when an unsupported flag is used in the config
 INVALID_FLAG = (

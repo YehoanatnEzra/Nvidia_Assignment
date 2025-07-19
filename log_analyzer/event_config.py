@@ -57,6 +57,8 @@ def _parse_event_line(line: str) -> EventConfig:
     """ Parses a single configuration line into an EventConfig object."""
     tokens = line.split()
     event_type = tokens[0]
+    if not event_type.isupper():
+        raise ValueError(error_messages.INVALID_LINE_FORMAT.format())
     flags = _parse_flags(tokens[1:], line)
 
     count = flags.get(COUNT_FLAG, False)
