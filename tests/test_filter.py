@@ -1,11 +1,6 @@
 """
 Tests for EventFilter, which determines whether a given LogEntry matches the rules defined in an EventConfig.
 
-This suite verifies filtering behavior based on:
-- event_type
-- log level
-- regex pattern in the log message
-
 Test Overview:
     - test_event_type_only_matches_and_rejects: Validates matching by event_type only, ignoring level and message.
     - test_level_constraint: Validates that matching requires both event_type and level to match.
@@ -22,16 +17,12 @@ from log_analyzer.log_entry import LogEntry
 
 
 def _make_entry(event_type: str, level: str, message: str) -> LogEntry:
-    """
-    Helper to create a basic LogEntry
-    """
+    """ Helper to create a basic LogEntry """
     return LogEntry(timestamp=datetime.now(), level=level, event_type=event_type, message=message)
 
 
 def test_event_type_only_matches_and_rejects():
-    """
-    Validates matching by event_type only, ignoring level and message.
-    """
+    """ Validates matching by event_type only, ignoring level and message."""
     configuration_file = EventConfig(event_type="EVENT1", count=False, level=None, pattern=None)
     flt = EventFilter(configuration_file)
     e1 = _make_entry("EVENT1", "LEVEL", "any message")
@@ -43,7 +34,6 @@ def test_event_type_only_matches_and_rejects():
 
 def test_level_constraint():
     """Validates that matching requires both event_type and level to match."""
-
     configuration_file = EventConfig(event_type="EVENT", count=False, level="LEVEL", pattern=None)
     flt = EventFilter(configuration_file)
     e_ok = _make_entry("EVENT", "LEVEL", "same event, same level")
@@ -56,9 +46,7 @@ def test_level_constraint():
 
 
 def test_pattern_constraint():
-    """
-    Validates that matching requires event_type + regex pattern match in message.
-    """
+    """ Validates that matching requires event_type + regex pattern match in message."""
     regex = re.compile(r"Nvidia")
     configuration_file = EventConfig(event_type="EVENT", count=False, level=None, pattern=regex)
     flt = EventFilter(configuration_file)
@@ -72,9 +60,7 @@ def test_pattern_constraint():
 
 
 def test_combined_constraints():
-    """
-    Validates that all three fields (event_type + level + pattern) must match together.
-    """
+    """ Validates that all three fields (event_type + level + pattern) must match together. """
     regex = re.compile(r"Nvidia")
     cfg = EventConfig(event_type="TestEvt", count=False, level="WARN", pattern=regex)
     flt = EventFilter(cfg)

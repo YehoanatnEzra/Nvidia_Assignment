@@ -82,23 +82,30 @@ def test_wrong_order():
 
 def test_invalid_timestamp_format():
     """Raises ValueError for timestamp with incorrect format."""
-    line = "2025/07/17 12:00:00 LEVEL EVENT invalid timestamp"
-    with pytest.raises(ValueError) as exc:
-        LogEntry.parse_line(line)
+    log = ["2025/07/17 12:00:00 LEVEL EVENT invalid timestamp",  # invalid format
+           "2025/7/17T12:00:00 LEVEL EVENT invalid timestamp",   # invalid format
+           "2025-07-17T25:00:00 LEVEL EVENT invalid timestamp",  # invalid hour
+           "2025-07-17T12:61:00 LEVEL EVENT invalid timestamp",  # invalid min
+           "2025-17-17T12:00:61 LEVEL EVENT invalid timestamp",  # invalid sec
+           "2025-13-17T12:00:00 LEVEL EVENT invalid timestamp",  # invalid month
+        ]
+    for line in log:
+        with pytest.raises(ValueError) as exc:
+            LogEntry.parse_line(line)
 
 
 def test_range_timestamp():
     """Raises ValueError if the log line's timestamp is in the future or more than MAX_PAST_YEARS years in the past."""
     future = (datetime.now(DEFAULT_LOCAL_TZ) + timedelta(days=1)).isoformat()
-    line = f"{future} LEVEL EVENT Future event"
+    line_future = f"{future} LEVEL EVENT Future event"
     with pytest.raises(ValueError) as exc:
-        LogEntry.parse_line(line)
+        LogEntry.parse_line(line_future)
     assert "is in the future" in str(exc.value)
 
     old = (datetime.now(DEFAULT_LOCAL_TZ) - timedelta(days=365 * (MAX_PAST_YEARS + 1))).isoformat()
-    line = f"{old} INFO EVENT Ancient event"
+    line_old = f"{old} INFO EVENT Ancient event"
     with pytest.raises(ValueError) as exc:
-        LogEntry.parse_line(line)
+        LogEntry.parse_line(line_old)
     assert f"more than {MAX_PAST_YEARS} years" in str(exc.value)
 
 

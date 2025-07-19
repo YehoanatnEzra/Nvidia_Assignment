@@ -1,4 +1,3 @@
-# log_analyzer/analyzer.py
 import csv
 import gzip
 import json
@@ -10,10 +9,10 @@ from log_analyzer.log_entry import LogEntry
 from log_analyzer.event_config import load_configs, EventConfig
 from log_analyzer.event_filter import EventFilter
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from log_analyzer import error_messages
 
-
-DEFAULT_LOCAL_TIME = "Asia/Jerusalem"
-MAX_WORKERS = os.cpu_count() or 4
+DEFAULT_LOCAL_TIME = "Asia/Jerusalem"    # Default timezone used for interpreting timestamps
+MAX_WORKERS = os.cpu_count() or 4        # Maximum number of threads to use
 
 
 class LogAnalyzer:
@@ -42,24 +41,37 @@ class LogAnalyzer:
         self.log_dir = log_dir
         self.configs: list[EventConfig] = load_configs(events_file)
         self.local_timezone = local_timezone
-        self.ts_from = datetime.fromisoformat(ts_from).replace(tzinfo=local_timezone) if ts_from else None
-        self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
+        try:
+            self.ts_from = datetime.fromisoformat(ts_from).replace(tzinfo=local_timezone) if ts_from else None
+        except ValueError as e:
+            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_from))
+
+        try:
+            self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
+        except ValueError as e:
+            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_to))
+
         self.max_workers = MAX_WORKERS
 
-    def _analyze(self) -> list[tuple[EventConfig, list[LogEntry]]]:
-        """
-        Analyze log entries by applying all event filters in parallel using threads.
-        """
-        entries = self._gather_entries()
+    # -------------------
+    # Helper Functions
+    # -------------------
 
-        def process_config(ev_config: EventConfig) -> tuple[EventConfig, list[LogEntry]]:
+    def _analyze(self) -> list[tuple[EventConfig, list[LogEntry]]]:
+        """ Analyze log entries by applying all event filters in parallel using threads."""
+        entries = self._gather_entries()  # Load and filter log entries from all log files
+
+        def _process_config(ev_config: EventConfig) -> tuple[EventConfig, list[LogEntry]]:
+            """ A task that filters entries using a specific config"""
             flt = EventFilter(ev_config)
             matched = [e for e in entries if flt.matches(e)]
             return (ev_config, matched)
 
         results = []
+        # Use thread pool to process each config in parallel
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            futures = {executor.submit(process_config, cfg): cfg for cfg in self.configs}
+            futures = {executor.submit(_process_config, cfg): cfg for cfg in self.configs}
+            # Collect results as each thread finishes
             for future in as_completed(futures):
                 results.append(future.result())
 
@@ -67,26 +79,31 @@ class LogAnalyzer:
 
     def _gather_entries(self) -> list[LogEntry]:
         """
-        Parallel version: Walk through all files in log_dir using threads,
-        parse each line to LogEntry, apply timestamp filtering, and collect valid entries.
+         Walks through all log files in the log directory and parses them into LogEntry objects, using threads to
+         process multiple files concurrently.
         """
+        # Identify valid log files: .log or .gz
         entries: list[LogEntry] = []
         log_dir_path = Path(self.log_dir)
-        log_files = [
-            p for p in log_dir_path.iterdir()
-            if p.is_file() and (p.suffix == ".log" or p.suffix == ".gz")
-        ]
+        log_files = [p for p in log_dir_path.iterdir() if p.is_file() and (p.suffix == ".log" or p.suffix == ".gz")]
 
         def _process_file(path: Path) -> list[LogEntry]:
+            """
+            Reads a single log file, parses each line to a LogEntry (if valid),and applies time-range filtering.
+            """
             result = []
             open_func = gzip.open if path.suffix == ".gz" else open
             with open_func(path, "rt", encoding="utf-8", errors="ignore") as f:
                 for line in f:
-                    entry = LogEntry.parse_line(line, local_timezone=self.local_timezone)
-                    if entry and self._in_range(entry):
-                        result.append(entry)
+                    try:
+                        entry = LogEntry.parse_line(line, local_timezone=self.local_timezone)
+                        if entry and self._in_range(entry):
+                            result.append(entry)
+                    except ValueError:
+                        continue   # Skip lines that don't match expected format.
             return result
 
+        # Process all files in parallel
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = {executor.submit(_process_file, path): path for path in log_files}
             for future in as_completed(futures):
@@ -95,10 +112,7 @@ class LogAnalyzer:
         return entries
 
     def _in_range(self, entry: LogEntry) -> bool:
-        """
-        Check whether entry.timestamp is between self.ts_from and self.ts_to (inclusive).
-        If no bounds are set, always True.
-        """
+        """Check whether entry.timestamp is between self.ts_from and self.ts_to (inclusive)."""
         ts = entry.timestamp
         if self.ts_from and ts < self.ts_from:
             return False
@@ -125,7 +139,23 @@ class LogAnalyzer:
                 })
         return entries
 
+    # -------------------
+    # Public Functions
+    # -------------------
     def run(self) -> None:
+        """
+        Executes the full log analysis pipeline and prints the results to the console.
+
+        For each event configuration (from the config file), this method:
+            - Analyzes matching entries from all logs
+            - Applies the relevant filters (event_type, --level, --pattern)
+            - Prints a header that describes the filters
+            - If --count was specified, prints the number of matches
+            - Otherwise, prints the actual matching log entries (or "(none)" if there are none)
+
+        This is the main method triggered in CLI usage when no export format is requested.
+        """
+
         for ev_config, matched in self._analyze():
             header = f"EventType: {ev_config.event_type}"
             specs = []

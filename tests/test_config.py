@@ -35,13 +35,18 @@ import re
 import pytest
 from log_analyzer.event_config import load_configs, EventConfig
 
+# Supported configuration flags for event rules
 CFG_NAME = "events.txt"
-LEVEL_FLAG = "--level"
-COUNT_FLAG = "--count"
-PATTERN_FLAG = "--pattern"
+LEVEL_FLAG = "--level"       # Filters entries by log level (e.g., "ERROR")
+COUNT_FLAG = "--count"       # Reports only the number of matching entries
+PATTERN_FLAG = "--pattern"   # Filters entries whose message matches a regex pattern
 
 
 def test_load_single_event(tmp_path):
+    """
+    Tests loading a single event with no flags.
+    Verifies that event_type is parsed and all optional fields are unset.
+    """
     # Create a temporary configuration's file and load it
     configuration_file = tmp_path / CFG_NAME
     configuration_file.write_text("LoginEvent")
@@ -57,14 +62,12 @@ def test_load_single_event(tmp_path):
 
 
 def test_count_flag(tmp_path):
+    """ Ensures the resulting config sets count=True."""
     # Create a temporary valid configuration's file with --count and load it
     configuration_file = tmp_path / CFG_NAME
     configuration_file.write_text(f"LoginEvent {COUNT_FLAG}")
-
-    # Act
     configs = load_configs(str(configuration_file))
 
-    # Assert
     assert len(configs) == 1
     c = configs[0]
     assert isinstance(c, EventConfig)
@@ -75,11 +78,11 @@ def test_count_flag(tmp_path):
 
 
 def test_level_flag(tmp_path):
+    """ Verifies the correct level is stored."""
     cfg_file = tmp_path / CFG_NAME
     cfg_file.write_text(f"DataExport {LEVEL_FLAG} WARNING")
-    # Act
     configs = load_configs(str(cfg_file))
-    # Assert
+
     assert len(configs) == 1
     c = configs[0]
     assert c.event_type == "DataExport"
@@ -89,6 +92,7 @@ def test_level_flag(tmp_path):
 
 
 def test_missing_level_value_raises_error(tmp_path):
+    """Tests that a missing value after --level raises a ValueError."""
     path = tmp_path / CFG_NAME
     path.write_text("EventX --level")
     with pytest.raises(ValueError, match="Missing value"):
@@ -96,13 +100,14 @@ def test_missing_level_value_raises_error(tmp_path):
 
 
 def test_pattern_flag(tmp_path):
+    """ Verifies that the pattern is compiled correctly."""
     # Pattern should compile a regex
     regex = r"\d+\s+items"
     cfg_file = tmp_path / CFG_NAME
     # quote the pattern so shlex.split sees it as one token
     cfg_file.write_text(f"UploadEvent {PATTERN_FLAG} \"{regex}\"")
-    # Act
     configs = load_configs(str(cfg_file))
+
     assert len(configs) == 1
     c = configs[0]
     assert c.event_type == "UploadEvent"
@@ -113,6 +118,7 @@ def test_pattern_flag(tmp_path):
 
 
 def test_missing_pattern_value_raises_error(tmp_path):
+    """Tests that a missing value after --pattern raises a ValueError."""
     cfg = tmp_path / CFG_NAME
     cfg.write_text("SomethingHappened --pattern")
     with pytest.raises(ValueError, match="Missing value"):
@@ -120,13 +126,15 @@ def test_missing_pattern_value_raises_error(tmp_path):
 
 
 def test_invalid_pattern_regex_raises(tmp_path):
-    cfg = tmp_path / "events.txt"
+    """Tests that an invalid regex pattern raises a re.error during compilation."""
+    cfg = tmp_path / CFG_NAME
     cfg.write_text(f"BadPattern {PATTERN_FLAG} \"[unclosed\"")
     with pytest.raises(re.error):
         load_configs(str(cfg))
 
 
 def test_invalid_flag_raises_error(tmp_path):
+    """Tests that an unrecognized flag causes a ValueError to be raised."""
     path = tmp_path / CFG_NAME
     path.write_text("EventX --invalid")
     with pytest.raises(ValueError, match="Invalid flag"):
@@ -134,6 +142,7 @@ def test_invalid_flag_raises_error(tmp_path):
 
 
 def test_all_flags_combined(tmp_path):
+    """Tests a line that uses --count, --level, and --pattern together."""
     path = tmp_path / CFG_NAME
     path.write_text(f"Login {COUNT_FLAG} {LEVEL_FLAG} ERROR {PATTERN_FLAG} 'failed'")
     configs = load_configs(str(path))
@@ -145,10 +154,9 @@ def test_all_flags_combined(tmp_path):
 
 
 def test_flags_in_any_order(tmp_path):
-    cfg = tmp_path / "events.txt"
-    cfg.write_text(
-        f"MyEvent {PATTERN_FLAG} \"x+\" {COUNT_FLAG} {LEVEL_FLAG} DEBUG"
-    )
+    """Tests that flags can appear in any order and are still parsed correctly."""
+    cfg = tmp_path / CFG_NAME
+    cfg.write_text(f"MyEvent {PATTERN_FLAG} \"x+\" {COUNT_FLAG} {LEVEL_FLAG} DEBUG")
     c = load_configs(str(cfg))[0]
     assert c.event_type == "MyEvent"
     assert c.count is True
@@ -157,23 +165,21 @@ def test_flags_in_any_order(tmp_path):
 
 
 def test_skip_comments_and_blank_lines(tmp_path):
+    """Tests that comment lines and blank lines are ignored."""
     # Arrange: mix comments, blanks, and two real rules
     lines = [
-        "# this is a comment",
-        "",
-        "    ",
-        f"Event1 {COUNT_FLAG}",
-        "",
-        "#another comment",
-        f"Event2 {LEVEL_FLAG} WARNING"
-    ]
+            "# this is a comment",
+            "",
+            "    ",
+            f"Event1 {COUNT_FLAG}",
+            "",
+            "#another comment",
+            f"Event2 {LEVEL_FLAG} WARNING"
+            ]
     cfg_file = tmp_path / CFG_NAME
     cfg_file.write_text("\n".join(lines) + "\n")
-
-    # Act
     configs = load_configs(str(cfg_file))
 
-    # Assert
     assert len(configs) == 2
 
     c0 = configs[0]
@@ -188,7 +194,8 @@ def test_skip_comments_and_blank_lines(tmp_path):
 
 
 def test_empty_or_comments_only(tmp_path):
-    cfg = tmp_path / "events.txt"
+    """Tests that an empty or comment-only configuration file returns an empty list."""
+    cfg = tmp_path / CFG_NAME
     # either completely empty:
     cfg.write_text("")
     assert load_configs(str(cfg)) == []

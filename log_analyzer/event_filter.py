@@ -5,26 +5,39 @@ from log_analyzer.log_entry import LogEntry
 
 class EventFilter:
     """
-       Wraps one EventConfig and check if Check that entry.event_type matches the config.event_type.
-       If config.level is set or config.pattern is set,  verify is matches entry.level/pattern equals it.
-       """
+    Filters log entries based on a given EventConfig.
+
+    Checks:
+    - entry.event_type must match config.event_type
+    - If config.level is set, entry.level must match
+    - If config.pattern is set, entry.message must match the regex
+    """
     def __init__(self, ev_config: EventConfig):
+        """
+        Initializes the filter with a specific event configuration.
+        """
         self.event_type: str = ev_config.event_type
         self.count:      bool = ev_config.count
         self.level:      str | None = ev_config.level
         self.pattern:    re.Pattern | None = ev_config.pattern
 
     def matches(self, entry: LogEntry) -> bool:
-        # event_type must match exactly
-        if entry.event_type != self.event_type:
-            return False
+        """
+           Determine if a given log entry matches the filter conditions.
 
-        # if a level was specified, it must match
-        if self.level is not None and entry.level != self.level:
-            return False
+           A match occurs if:
+           - The event_type matches exactly.
+           - If a level is specified, it must match the entry's level.
+           - If a pattern is specified, it must match the entry's message.
 
-        # if a regex pattern was specified, it must be found in the message
-        if self.pattern is not None and not self.pattern.search(entry.message):
-            return False
+           Returns:
+               bool: True if the entry matches all applicable conditions, False otherwise.
+           """
+        return (
+                entry.event_type == self.event_type and
+                (self.level is None or entry.level == self.level) and
+                (self.pattern is None or bool(self.pattern.search(entry.message)))
+        )
 
-        return True
+
+

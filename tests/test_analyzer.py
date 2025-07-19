@@ -1,3 +1,20 @@
+"""
+Unit tests for the log_analyzer.analyzer module.
+
+# Test overview:
+    - test_run_with_empty_log_folder(): Ensures no errors occur when the log folder is empty and zero matches are
+      reported.
+    - test_run_invalid_log_name(): Verifies that files with non-log names are skipped correctly.
+    - test_run_prints_expected_output(): Validates core functionality with mixed valid & invalid lines, comments,
+      and compressed logs.
+    - test_invalid_config_line_raises_error(): Ensures that a bad config line raises a ValueError.
+    - test_run_with_timestamp_range_filter():Checks timestamp filtering behavior, including exclusive 'from' and
+      inclusive 'to'.
+    - test_multiple_filters_for_same_event_type():Verifies that multiple filters on the same event type are each
+      applied and reported separately.
+"""
+
+
 import gzip
 import sys
 import pytest
@@ -16,8 +33,7 @@ def _write_log_file(path, lines, compress=False):
 
 def test_run_with_empty_log_folder(tmp_path):
     """
-      Verify that the analyzer handles an empty log folder without errors,
-       and returns zero matches as expected.
+      Verify that the analyzer handles an empty log folder without errors and returns zero matches as expected.
     """
     log_dir = tmp_path / "logs"
     log_dir.mkdir()
@@ -89,7 +105,6 @@ def test_run_prints_expected_output(tmp_path):
     # Config that matches the event type and counts
     config_file = tmp_path / "events.txt"
     config_file.write_text("# comment \n TESTEVENT --count")
-
     # Redirect stdout to capture print output
     saved_stdout = sys.stdout
     try:
@@ -123,8 +138,8 @@ def test_invalid_config_line_raises_error(tmp_path):
 def test_run_with_timestamp_range_filter(tmp_path):
     """
     Verify timestamp filtering behavior:
-    'ts_from' is exclusive (entries with the exact same timestamp should be excluded),
-    'ts_to' is inclusive (entries with the exact same timestamp should be included).
+        'ts_from' is exclusive (entries with the exact same timestamp should be excluded),
+        'ts_to' is inclusive (entries with the exact same timestamp should be included).
     """
 
     log_dir = tmp_path / "logs"
@@ -161,11 +176,7 @@ def test_run_with_timestamp_range_filter(tmp_path):
 
 
 def test_multiple_filters_for_same_event_type(tmp_path):
-    """
-    Ensure that multiple filters for the same event type (e.g., --count, --pattern, --level)
-    are each evaluated and reported independently.
-    """
-
+    """ Ensure that multiple filters for the same event type are each evaluated and reported independently."""
     log_dir = tmp_path / "logs"
     log_dir.mkdir()
 
