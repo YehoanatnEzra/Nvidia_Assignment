@@ -47,15 +47,23 @@ class LogAnalyzer:
         self.max_workers = MAX_WORKERS
 
     def _analyze(self) -> list[tuple[EventConfig, list[LogEntry]]]:
+        """
+        Analyze log entries by applying all event filters in parallel using threads.
+        """
         entries = self._gather_entries()
-        results = []
-        for ev_config in self.configs:
+
+        def process_config(ev_config: EventConfig) -> tuple[EventConfig, list[LogEntry]]:
             flt = EventFilter(ev_config)
             matched = [e for e in entries if flt.matches(e)]
-            results.append((ev_config, matched))
+            return (ev_config, matched)
+
+        results = []
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = {executor.submit(process_config, cfg): cfg for cfg in self.configs}
+            for future in as_completed(futures):
+                results.append(future.result())
+
         return results
-
-
 
     def _gather_entries(self) -> list[LogEntry]:
         """

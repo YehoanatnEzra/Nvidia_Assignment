@@ -1,6 +1,4 @@
-# TODO - documentation
 import re
-import shlex
 from dataclasses import dataclass
 from log_analyzer import error_messages
 
@@ -12,22 +10,13 @@ ALLOWED_FLAGS = {LEVEL_FLAG, COUNT_FLAG, PATTERN_FLAG}
 
 @dataclass
 class EventConfig:
-    """
-    Represents one rule from the events file.
-    """
-    event_type: str              # e.g. "UserLogin"
-    count:      bool              # True if we should only tally matches
-    level: str | None     # e.g. "ERROR", or None to match any level
-    pattern: re.Pattern | None  # compiled regex to apply to the message, or None
+    event_type: str
+    count: bool
+    level: str | None
+    pattern: re.Pattern | None
 
 
 def load_configs(path: str) -> list[EventConfig]:
-    """
-    Load rules from a file such as 'events_sample.txt'.
-    Each line is:
-        EVENT_TYPE [--count] [--level LEVEL] [--pattern REGEX]
-    Blank lines and lines starting with '#' are ignored.
-    """
     configs: list[EventConfig] = []
 
     with open(path, 'r', encoding='utf-8') as f:
@@ -35,42 +24,48 @@ def load_configs(path: str) -> list[EventConfig]:
             line = raw.strip()
             if not line or line.startswith('#'):
                 continue
-
-            tokens = shlex.split(line)  # shlex.split handles quoted regex patterns correctly
-            event_type = tokens[0]  # First token is the event_type
-
-            # Defaults
-            count = False
-            level = None
-            pattern = None
-
-            # Parse flags
-            idx = 1
-            while idx < len(tokens):
-                flag = tokens[idx]
-
-                if flag == COUNT_FLAG:
-                    count = True
-                    idx += 1
-
-                elif flag == LEVEL_FLAG:
-                    if idx + 1 >= len(tokens):
-                        raise ValueError(error_messages.MISSING_VALUE_ERR.format(flag=flag, line=line))
-                    level = tokens[idx+1]
-                    idx += 2
-
-                elif flag == PATTERN_FLAG:
-                    if idx + 1 >= len(tokens):
-                        raise ValueError(error_messages.MISSING_VALUE_ERR.format(flag=flag, line=line))
-                    pattern = re.compile(tokens[idx+1])  # compile the regex
-                    idx += 2
-
-                else:
-                    allowed = ", ".join(sorted(ALLOWED_FLAGS))
-                    raise ValueError(
-                        error_messages.INVALID_FLAG.format(flag=flag, line=line, allowed=allowed)
-                    )
-
-            configs.append(EventConfig(event_type=event_type, count=count, level=level, pattern=pattern))
+            config = _parse_event_line(line)
+            configs.append(config)
 
     return configs
+
+
+def _parse_event_line(line: str) -> EventConfig:
+    tokens = line.split()
+    event_type = tokens[0]
+    flags = _parse_flags(tokens[1:], line)
+
+    count = flags.get(COUNT_FLAG, False)
+    level = flags.get(LEVEL_FLAG)
+    pattern_str = flags.get(PATTERN_FLAG)
+    pattern = re.compile(pattern_str) if pattern_str else None
+
+    return EventConfig(event_type=event_type, count=count, level=level, pattern=pattern)
+
+
+def _parse_flags(tokens: list[str], original_line: str) -> dict:
+    flags = {}
+    idx = 0
+    while idx < len(tokens):
+        flag = tokens[idx]
+
+        if flag == COUNT_FLAG:
+            flags[COUNT_FLAG] = True
+            idx += 1
+
+        elif flag in {LEVEL_FLAG, PATTERN_FLAG}:
+            if idx + 1 >= len(tokens):
+                raise ValueError(error_messages.MISSING_VALUE_ERR.format(flag=flag, line=original_line))
+
+            idx += 1
+            value_parts = []
+            while idx < len(tokens) and tokens[idx] not in ALLOWED_FLAGS:
+                value_parts.append(tokens[idx])
+                idx += 1
+            flags[flag] = " ".join(value_parts)
+
+        else:
+            allowed = ", ".join(sorted(ALLOWED_FLAGS))
+            raise ValueError(error_messages.INVALID_FLAG.format(flag=flag, line=original_line, allowed=allowed))
+
+    return flags

@@ -1,3 +1,4 @@
+TELEMETRY --count --pattern ^Iteration time:\s\d+\.\d+\ssec$
 EVENT 
 EVENT --count  --pattern ^Another.*
 EVENT  --level INFO
