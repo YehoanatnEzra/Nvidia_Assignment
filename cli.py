@@ -28,21 +28,12 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 from log_analyzer.analyzer import LogAnalyzer
+import messages
 
 
 # -------------------
 # Helper Functions
 # -------------------
-def _print_intro():
-    """ Prints a friendly welcome message at the beginning of the analysis."""
-    print("\nHi! Welcome to the Log Analyzer :)")
-    print("-----------------------------------------")
-    print("I'm now scanning your logs and applying filters based on your configuration\nLet’s get started!\n")
-
-
-def _print_outro():
-    """ Prints a closing thank-you message after the analysis is complete."""
-    print("\nThank you, have a nice day :) \n")
 
 
 def _handle_export(analyzer):
@@ -50,9 +41,7 @@ def _handle_export(analyzer):
     Interactively prompts the user to export the analysis results.
     If the user selects 'json' or 'csv', the results are written to a timestamped file.
     """
-
-    print("Would you like to export the results?")
-
+    print(messages.EXPORT_QUESTION)
     choice = ""
     while choice not in ("y", "n"):
         choice = input("Please type 'y' or 'n': ").strip().lower()
@@ -95,8 +84,15 @@ def main():
     # Resolve paths
     log_dir = Path(args.logs_dir)
     events_file = Path(args.events_file)
+    if not log_dir.exists() or not log_dir.is_dir():
+        print(messages.LOGS_DIR_NOT_FOUND)
+        return
 
-    _print_intro()  # welcome message
+    if not events_file.exists() or not events_file.is_file():
+        print(messages.EVENTS_FILE_NOT_FOUND)
+        return
+
+    print(messages.INTRO_MSG) # welcome message
 
     analyzer = LogAnalyzer(str(log_dir), str(events_file), ts_from=args.ts_from, ts_to=args.ts_to)
     analyzer.run()  # Run the core analysis: read logs, apply filters, and print results
@@ -104,8 +100,7 @@ def main():
     # Ask the user if they want to export the results to Json
     _handle_export(analyzer)
 
-    # Show closing message
-    _print_outro()
+    print(messages.OUTRO_MSG)  # Show closing message
 
 
 if __name__ == "__main__":

@@ -1,10 +1,4 @@
-TODO:
-
-## Question I would like to ask:
-* should process only files that end with .log or .log.gz, and ignore all other file type
-* <level> and <event_type> must to be with upcase letter?
-* <if no, same level\event level but one with upcase letter and the other with down letter - its considered as a differents levels/event levels or is the same?
-* There’s a strict rule on level or event level
+TODO
 
 ### input:
 * Should decide what to do if the folder path or the event_file path is invalid
