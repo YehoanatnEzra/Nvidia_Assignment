@@ -53,6 +53,9 @@ class LogEntry:
             raise ValueError(error_messages.INVALID_LINE_FORMAT)
         ts_str, lvl_str, ev_type, msg = parts
 
+        if not ev_type.isupper() or not lvl_str.isupper():
+            raise ValueError(error_messages.INVALID_LINE_FORMAT)
+
         # Parse ISO8601 timestamp
         try:
             ts = datetime.fromisoformat(ts_str)

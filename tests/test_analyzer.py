@@ -36,7 +36,7 @@ def test_run_with_empty_log_folder(tmp_path):
         output = sys.stdout.getvalue()
 
         assert "TELEMETRY" in output
-        assert "0 matches" in output
+        assert "Count of matches: 0" in output
     finally:
         sys.stdout = saved_stdout
 
@@ -50,20 +50,20 @@ def test_run_prints_expected_output(tmp_path):
     log_dir = tmp_path / "logs"
     log_dir.mkdir()
 
-    l1_valid1 = "2025-07-18T12:00:00 INFO TestEvent Hello world"
+    l1_valid1 = "2025-07-18T12:00:00 INFO TESTEVENT Hello world"
     l1_invalid1 = "this is invalid log line"
     _write_log_file(log_dir / "l1.log", [l1_valid1, l1_invalid1], compress=False)
 
-    l2_valid1 = "2025-07-18T13:00:00 INFO TestEvent Another entry"
-    l2_comment1 = "# 2025-07-18T13:00:00 INFO TestEvent Another entry"
-    l2_valid2 = "2025-07-18T13:00:00 INFO TestEvent another text"
+    l2_valid1 = "2025-07-18T13:00:00 INFO TESTEVENT Another entry"
+    l2_comment1 = "# 2025-07-18T13:00:00 INFO TESTEVENT Another entry"
+    l2_valid2 = "2025-07-18T13:00:00 INFO TESTEVENT another text"
     l2_invalid1 = "this is invalid log line 2"
     l2_invalid2 = "invalid3"
     _write_log_file(log_dir / "l2.log.gz", [l2_valid1, l2_comment1, l2_invalid1, l2_invalid2, l2_valid2], compress=True)
 
     # Config that matches the event type and counts
     config_file = tmp_path / "events.txt"
-    config_file.write_text("# comment \n TestEvent --count")
+    config_file.write_text("# comment \n TESTEVENT --count")
 
     # Redirect stdout to capture print output
     saved_stdout = sys.stdout
@@ -76,8 +76,8 @@ def test_run_prints_expected_output(tmp_path):
 
         output = out.getvalue()
 
-        assert "TestEvent" in output
-        assert "3 matches" in output
+        assert "TESTEVENT" in output
+        assert "Count of matches: 3" in output
     finally:
         sys.stdout = saved_stdout
 
@@ -108,18 +108,18 @@ def test_run_with_timestamp_range_filter(tmp_path):
     ts_from = "2025-07-18T00:00:00"
     ts_to = "2025-07-18T23:59:50"
 
-    early1 = "2025-07-17T10:00:00 INFO EventType msg early"
-    middle1 = f"{ts_from} INFO EventType msg inside"   # inclusive upper bound
-    middle2 = "2025-07-18T12:00:00 INFO EventType msg inside"
-    middle3 = "2025-07-18T12:10:00 INFO EventType msg inside"
-    middle4 = f"{ts_to} INFO EventType msg inside"  # inclusive lower bound
-    late1 = "2025-07-18T23:59:52 INFO EventType msg late"
-    late2 = "2025-07-19T20:00:00 INFO EventType msg late"
+    early1 = "2025-07-17T10:00:00 INFO EVENT msg early"
+    middle1 = f"{ts_from} INFO EVENT msg inside"   # inclusive upper bound
+    middle2 = "2025-07-18T12:00:00 INFO EVENT msg inside"
+    middle3 = "2025-07-18T12:10:00 INFO EVENT msg inside"
+    middle4 = f"{ts_to} INFO EVENT msg inside"  # inclusive lower bound
+    late1 = "2025-07-18T23:59:52 INFO EVENT msg late"
+    late2 = "2025-07-19T20:00:00 INFO EVENT msg late"
 
     _write_log_file(log_dir / "range.log", [early1, middle1, middle2, middle3, late1, late2, middle4], compress=False)
 
     config_file = tmp_path / "events.txt"
-    config_file.write_text("EventType --count")
+    config_file.write_text("EVENT --count")
 
     saved_stdout = sys.stdout
     try:
@@ -128,8 +128,8 @@ def test_run_with_timestamp_range_filter(tmp_path):
         analyzer.run()
         output = sys.stdout.getvalue()
 
-        assert "EventType" in output
-        assert "4 matches" in output
+        assert "EVENT" in output
+        assert "Count of matches: 4" in output
 
     finally:
         sys.stdout = saved_stdout
@@ -145,17 +145,17 @@ def test_multiple_filters_for_same_event_type(tmp_path):
     log_dir.mkdir()
 
     log_lines = [
-        "2025-07-18T10:00:00 INFO TestEvent First valid match",
-        "2025-07-18T11:00:00 INFO TestEvent Another valid match",
-        "2025-07-18T12:00:00 DEBUG TestEvent Should not match level INFO",
-        "2025-07-18T13:00:00 INFO OtherEvent Should be ignored"
+        "2025-07-18T10:00:00 INFO EVENT First valid match",
+        "2025-07-18T11:00:00 INFO EVENT Another valid match",
+        "2025-07-18T12:00:00 DEBUG EVENT Should not match level INFO",
+        "2025-07-18T13:00:00 INFO OTHER Should be ignored"
     ]
     _write_log_file(log_dir / "test.log", log_lines)
 
     config_lines = [
-        "TestEvent --count",
-        "TestEvent  --pattern ^Another.*",
-        "TestEvent --count --level INFO"
+        "EVENT --count",
+        "EVENT  --pattern ^Another.*",
+        "EVENT --count --level INFO"
     ]
     config_file = tmp_path / "events.txt"
     config_file.write_text("\n".join(config_lines))
@@ -166,8 +166,8 @@ def test_multiple_filters_for_same_event_type(tmp_path):
         LogAnalyzer(str(log_dir), str(config_file)).run()
 
         output = sys.stdout.getvalue()
-        assert "3 matches" in output
+        assert "Count of matches: 3" in output
         assert "^Another.*" in output
-        assert "2 matches" in output
+        assert "Count of matches: 2" in output
     finally:
         sys.stdout = saved_stdout

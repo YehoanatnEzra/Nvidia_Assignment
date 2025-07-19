@@ -1,3 +1,0 @@
-TestEvent 
-TestEvent --count  --pattern ^Another.*
-TestEvent  --level INFO

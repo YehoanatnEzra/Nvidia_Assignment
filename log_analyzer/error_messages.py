@@ -1,8 +1,11 @@
-# error_messages.py
 
 INVALID_LINE_FORMAT = (
-    "Invalid log line format — expected format: <TIMESTAMP> <LEVEL> <EVENT_TYPE> <MESSAGE>"
+    "Invalid log line format — expected format: <TIMESTAMP> <LEVEL> <EVENT_TYPE> <MESSAGE>. "
+    "LEVEL and EVENT_TYPE must be uppercase. "
+    "TIMESTAMP must be ISO‑8601 (YYYY‑MM‑DDThh:mm:ss), "
+    "Example: 2025-07-17T12:00:00 INFO LOGIN User 'bob' logged in"
 )
+
 
 INVALID_TIMESTAMP_FORMAT = (
     "Invalid timestamp format: {ts!r}. "

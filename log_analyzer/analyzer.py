@@ -8,7 +8,7 @@ from log_analyzer.log_entry import LogEntry
 from log_analyzer.event_config import load_configs, EventConfig
 from log_analyzer.event_filter import EventFilter
 
-__all__ = ["LogAnalyzer"]
+
 DEFAULT_LOCAL_TIME = "Asia/Jerusalem"
 
 
@@ -34,35 +34,36 @@ class LogAnalyzer:
         self.ts_to = datetime.fromisoformat(ts_to).replace(tzinfo=local_timezone) if ts_to else None
 
     def run(self) -> None:
-        entries = self._gather_entries()
-
-        for ev_config in self.configs:
-            flt = EventFilter(ev_config)
-            matched = [entry for entry in entries if flt.matches(entry)]
-
-            header = ev_config.event_type
-            # If there was a pattern or level constraint, show it
+        for ev_config, matched in self.analyze():
+            header = f"EventType: {ev_config.event_type}"
             specs = []
             if ev_config.count:
-                specs.append(f" count")
+                specs.append("count")
             if ev_config.level:
-                specs.append(f" level={ev_config.level}")
+                specs.append(f"level={ev_config.level}")
             if ev_config.pattern:
-                specs.append(f" pattern={ev_config.pattern.pattern}")
+                specs.append(f"pattern={ev_config.pattern.pattern}")
             if specs:
-                header += " (flags:" + ",".join(specs) + ")"
+                header += "\nflags:" + ",".join(specs) + ":"
 
             if ev_config.count:
-                # Note the colon, which your tests look for
-                print(f"{header}: {len(matched)} matches:\n")
-
+                print(f"{header}\nCount of matches: {len(matched)}\n")
             else:
-                print(f"{header} matching entries:")
+                print(f"{header}\nmatching entries:")
                 for entry in matched:
                     print(f"  {entry}")
                 if not matched:
                     print("  (none)")
                 print(" ")
+
+    def analyze(self) -> list[tuple[EventConfig, list[LogEntry]]]:
+        entries = self._gather_entries()
+        results = []
+        for ev_config in self.configs:
+            flt = EventFilter(ev_config)
+            matched = [e for e in entries if flt.matches(e)]
+            results.append((ev_config, matched))
+        return results
 
     def _gather_entries(self) -> list[LogEntry]:
         """
