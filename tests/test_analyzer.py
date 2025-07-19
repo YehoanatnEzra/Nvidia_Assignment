@@ -1,10 +1,7 @@
 import gzip
 import sys
-from datetime import datetime
-from io import StringIO
-
 import pytest
-
+from io import StringIO
 from log_analyzer.analyzer import LogAnalyzer
 
 
@@ -36,6 +33,34 @@ def test_run_with_empty_log_folder(tmp_path):
         output = sys.stdout.getvalue()
 
         assert "TELEMETRY" in output
+        assert "Count of matches: 0" in output
+    finally:
+        sys.stdout = saved_stdout
+
+
+def test_run_invalid_log_name(tmp_path):
+    """ Verify that the analyzer skip log with a wrong name and returns zero matches as expected. """
+    log_dir = tmp_path / "logs"
+    log_dir.mkdir()
+
+    line = "2025-07-18T12:00:00 INFO EVEN Hello world"
+    _write_log_file(log_dir / "invalid_name", [line], compress=False)
+
+    config_file = tmp_path / "events.txt"
+    config_file.write_text("EVEN --count")
+
+    LogAnalyzer(str(log_dir), str(config_file))
+    saved_stdout = sys.stdout
+    try:
+        out = StringIO()
+        sys.stdout = out
+
+        analyzer = LogAnalyzer(str(log_dir), str(config_file))
+        analyzer.run()
+
+        output = out.getvalue()
+
+        assert "EVEN" in output
         assert "Count of matches: 0" in output
     finally:
         sys.stdout = saved_stdout
