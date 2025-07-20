@@ -1,0 +1,517 @@
+[
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": false,
+      "level": "INFO",
+      "pattern": "^Iteration time:\\s\\d+\\.\\d+\\ssec$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:03:05+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 1793.845 sec"
+      },
+      {
+        "timestamp": "2025-06-01T14:15:30+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 120.5 sec"
+      },
+      {
+        "timestamp": "2025-06-01T14:30:00+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 95.2 sec"
+      },
+      {
+        "timestamp": "2025-06-01T14:45:12+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 234.7 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:00:15+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 156.3 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:15:08+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 89.1 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:30:55+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 312.8 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:45:38+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 178.9 sec"
+      },
+      {
+        "timestamp": "2025-06-01T16:00:33+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 267.4 sec"
+      },
+      {
+        "timestamp": "2025-06-01T16:15:42+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 143.6 sec"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^data corruption detected in telemetry stream$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:10:22+03:00",
+        "level": "ERROR",
+        "message": "data corruption detected in telemetry stream"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^low memory warning:\\s\\d+%\\susage$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:20:45+03:00",
+        "level": "WARNING",
+        "message": "low memory warning: 85% usage"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": null
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:10:00+03:00",
+        "level": "ERROR",
+        "message": "unresponsive telemetry at endpoint http://192.168.1.10:9001/csv/xcset/low_freq_debug"
+      },
+      {
+        "timestamp": "2025-06-01T14:25:10+03:00",
+        "level": "ERROR",
+        "message": "connection timeout at endpoint http://192.168.1.15:9002"
+      },
+      {
+        "timestamp": "2025-06-01T14:55:45+03:00",
+        "level": "ERROR",
+        "message": "authentication failed for endpoint http://192.168.1.20:9003"
+      },
+      {
+        "timestamp": "2025-06-01T15:10:22+03:00",
+        "level": "ERROR",
+        "message": "data corruption detected in telemetry stream"
+      },
+      {
+        "timestamp": "2025-06-01T15:25:17+03:00",
+        "level": "ERROR",
+        "message": "endpoint not responding: http://192.168.1.25:9004"
+      },
+      {
+        "timestamp": "2025-06-01T15:40:12+03:00",
+        "level": "ERROR",
+        "message": "SSL certificate expired for endpoint https://192.168.1.30:9005"
+      },
+      {
+        "timestamp": "2025-06-01T15:55:47+03:00",
+        "level": "ERROR",
+        "message": "malformed response from endpoint http://192.168.1.35:9006"
+      },
+      {
+        "timestamp": "2025-06-01T16:10:56+03:00",
+        "level": "ERROR",
+        "message": "network unreachable: http://192.168.1.40:9007"
+      },
+      {
+        "timestamp": "2025-06-01T16:25:35+03:00",
+        "level": "ERROR",
+        "message": "rate limit exceeded for endpoint http://192.168.1.45:9008"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^network unreachable:\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T16:10:56+03:00",
+        "level": "ERROR",
+        "message": "network unreachable: http://192.168.1.40:9007"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^fan speed below threshold:\\s\\d+\\sRPM$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:35:29+03:00",
+        "level": "WARNING",
+        "message": "fan speed below threshold: 1200 RPM"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^rate limit exceeded for endpoint\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T16:25:35+03:00",
+        "level": "ERROR",
+        "message": "rate limit exceeded for endpoint http://192.168.1.45:9008"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^power consumption above normal:\\s\\d+W$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:50:24+03:00",
+        "level": "WARNING",
+        "message": "power consumption above normal: 450W"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^SSL certificate expired for endpoint\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:40:12+03:00",
+        "level": "ERROR",
+        "message": "SSL certificate expired for endpoint https://192.168.1.30:9005"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^detected high temperature of device\\s[a-f0-9\\-]{36}:\\s\\d+C$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:05:22+03:00",
+        "level": "WARNING",
+        "message": "detected high temperature of device c95fe73e-14db-4ef4-909d-0c1db67c41ee: 40C"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^authentication failed for endpoint\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:55:45+03:00",
+        "level": "ERROR",
+        "message": "authentication failed for endpoint http://192.168.1.20:9003"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^malformed response from endpoint\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:55:47+03:00",
+        "level": "ERROR",
+        "message": "malformed response from endpoint http://192.168.1.35:9006"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^disk space low:\\s\\d+%\\sfull$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:50:28+03:00",
+        "level": "WARNING",
+        "message": "disk space low: 92% full"
+      }
+    ]
+  },
+  {
+    "event_type": "TELEMETRY",
+    "filters": {
+      "count": true,
+      "level": null,
+      "pattern": "^Iteration time:\\s\\d+\\.\\d+\\ssec$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:03:05+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 1793.845 sec"
+      },
+      {
+        "timestamp": "2025-06-01T14:15:30+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 120.5 sec"
+      },
+      {
+        "timestamp": "2025-06-01T14:30:00+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 95.2 sec"
+      },
+      {
+        "timestamp": "2025-06-01T14:45:12+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 234.7 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:00:15+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 156.3 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:15:08+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 89.1 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:30:55+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 312.8 sec"
+      },
+      {
+        "timestamp": "2025-06-01T15:45:38+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 178.9 sec"
+      },
+      {
+        "timestamp": "2025-06-01T16:00:33+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 267.4 sec"
+      },
+      {
+        "timestamp": "2025-06-01T16:15:42+03:00",
+        "level": "INFO",
+        "message": "Iteration time: 143.6 sec"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^CPU usage elevated:\\s\\d+%$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:20:41+03:00",
+        "level": "WARNING",
+        "message": "CPU usage elevated: 78%"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^unresponsive telemetry at endpoint\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:10:00+03:00",
+        "level": "ERROR",
+        "message": "unresponsive telemetry at endpoint http://192.168.1.10:9001/csv/xcset/low_freq_debug"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^endpoint not responding:\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:25:17+03:00",
+        "level": "ERROR",
+        "message": "endpoint not responding: http://192.168.1.25:9004"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "ERROR",
+      "pattern": "^connection timeout at endpoint\\s.+$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:25:10+03:00",
+        "level": "ERROR",
+        "message": "connection timeout at endpoint http://192.168.1.15:9002"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^network latency high:\\s\\d+ms$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T15:05:33+03:00",
+        "level": "WARNING",
+        "message": "network latency high: 150ms"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": true,
+      "level": "WARNING",
+      "pattern": null
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:05:22+03:00",
+        "level": "WARNING",
+        "message": "detected high temperature of device c95fe73e-14db-4ef4-909d-0c1db67c41ee: 40C"
+      },
+      {
+        "timestamp": "2025-06-01T14:20:45+03:00",
+        "level": "WARNING",
+        "message": "low memory warning: 85% usage"
+      },
+      {
+        "timestamp": "2025-06-01T14:50:28+03:00",
+        "level": "WARNING",
+        "message": "disk space low: 92% full"
+      },
+      {
+        "timestamp": "2025-06-01T15:05:33+03:00",
+        "level": "WARNING",
+        "message": "network latency high: 150ms"
+      },
+      {
+        "timestamp": "2025-06-01T15:20:41+03:00",
+        "level": "WARNING",
+        "message": "CPU usage elevated: 78%"
+      },
+      {
+        "timestamp": "2025-06-01T15:35:29+03:00",
+        "level": "WARNING",
+        "message": "fan speed below threshold: 1200 RPM"
+      },
+      {
+        "timestamp": "2025-06-01T15:50:24+03:00",
+        "level": "WARNING",
+        "message": "power consumption above normal: 450W"
+      },
+      {
+        "timestamp": "2025-06-01T16:05:19+03:00",
+        "level": "WARNING",
+        "message": "temperature sensor reading invalid"
+      },
+      {
+        "timestamp": "2025-06-01T16:20:18+03:00",
+        "level": "WARNING",
+        "message": "backup process taking longer than expected"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^backup process taking longer than expected$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T16:20:18+03:00",
+        "level": "WARNING",
+        "message": "backup process taking longer than expected"
+      }
+    ]
+  },
+  {
+    "event_type": "GNMI",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^retry attempt \\d+/\\d+ for endpoint detection$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T14:40:30+03:00",
+        "level": "WARNING",
+        "message": "retry attempt 3/5 for endpoint detection"
+      }
+    ]
+  },
+  {
+    "event_type": "DEVICE",
+    "filters": {
+      "count": false,
+      "level": "WARNING",
+      "pattern": "^temperature sensor reading invalid$"
+    },
+    "entries": [
+      {
+        "timestamp": "2025-06-01T16:05:19+03:00",
+        "level": "WARNING",
+        "message": "temperature sensor reading invalid"
+      }
+    ]
+  }
+]
