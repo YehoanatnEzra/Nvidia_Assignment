@@ -93,7 +93,7 @@ def _parse_flags(tokens: list[str], original_line: str) -> dict:
                 idx += 1
             raw = " ".join(value_parts)
 
-            if (raw.startswith('"') and raw.endswith('"')) or(raw.startswith("'") and raw.endswith("'")):
+            if (raw.startswith('"') and raw.endswith('"')) or (raw.startswith("'") and raw.endswith("'")):
                 raw = raw[1:-1]
 
             flags[flag] = raw
@@ -103,4 +103,3 @@ def _parse_flags(tokens: list[str], original_line: str) -> dict:
             raise ValueError(error_messages.INVALID_FLAG.format(flag=flag, line=original_line, allowed=allowed))
 
     return flags
-

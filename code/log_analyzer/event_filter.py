@@ -38,6 +38,3 @@ class EventFilter:
                 (self.level is None or entry.level == self.level) and
                 (self.pattern is None or bool(self.pattern.search(entry.message)))
         )
-
-
-

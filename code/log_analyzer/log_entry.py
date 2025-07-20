@@ -105,5 +105,3 @@ class LogEntry:
             raise ValueError(error_messages.TOO_OLD_TIMESTAMP.format(ts=ts, years=MAX_PAST_YEARS))
 
         return ts
-
-
