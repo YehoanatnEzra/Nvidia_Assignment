@@ -56,18 +56,11 @@ class LogEntry:
             raise ValueError(error_messages.INVALID_LINE_FORMAT)
         ts_str, lvl_str, ev_type, msg = parts
 
+        # Validate event type and level
         if not ev_type.isupper() or not lvl_str.isupper():
             raise ValueError(error_messages.INVALID_LINE_FORMAT)
 
-        # Parse ISO8601 timestamp
-        try:
-            ts = datetime.fromisoformat(ts_str)
-            if ts.tzinfo is None:
-                ts = ts.replace(tzinfo=local_timezone)
-        except ValueError as e:
-            raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_str, error=e))
-
-        # Validate that the timestamp is not in the future.
+        # Validate timestamp
         ts = cls._validate_and_parse_timestamp(ts_str, local_timezone)
 
         return cls(ts, lvl_str, ev_type, msg)
@@ -93,8 +86,7 @@ class LogEntry:
         except ValueError as e:
             raise ValueError(error_messages.INVALID_TIMESTAMP_FORMAT.format(ts=ts_str, error=e))
 
-        if ts.tzinfo is None:
-            ts = ts.replace(tzinfo=local_timezone)
+        ts = ts.replace(tzinfo=local_timezone)
 
         now = datetime.now(local_timezone)
 
@@ -105,3 +97,4 @@ class LogEntry:
             raise ValueError(error_messages.TOO_OLD_TIMESTAMP.format(ts=ts, years=MAX_PAST_YEARS))
 
         return ts
+
